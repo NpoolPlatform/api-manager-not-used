@@ -4,6 +4,7 @@ import (
 	"context"
 
 	crud "github.com/NpoolPlatform/api-manager/pkg/crud/service-api"
+	mw "github.com/NpoolPlatform/api-manager/pkg/middleware/service-api"
 	npool "github.com/NpoolPlatform/message/npool/apimgr"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -13,7 +14,7 @@ import (
 )
 
 func (s *Server) Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterResponse, error) {
-	resp, err := crud.Register(ctx, in)
+	resp, err := mw.Register(ctx, in)
 	if err != nil {
 		logger.Sugar().Errorw("api register error: %v", err)
 		return &npool.RegisterResponse{}, status.Error(codes.Internal, err.Error())
