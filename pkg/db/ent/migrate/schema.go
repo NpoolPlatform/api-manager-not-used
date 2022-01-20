@@ -8,19 +8,34 @@ import (
 )
 
 var (
-	// EmptiesColumns holds the columns for the "empties" table.
-	EmptiesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+	// ServiceApIsColumns holds the columns for the "service_ap_is" table.
+	ServiceApIsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "domain", Type: field.TypeString},
+		{Name: "method", Type: field.TypeString},
+		{Name: "path", Type: field.TypeString},
+		{Name: "exported", Type: field.TypeBool},
+		{Name: "path_prefix", Type: field.TypeString},
+		{Name: "create_at", Type: field.TypeUint32},
+		{Name: "update_at", Type: field.TypeUint32},
+		{Name: "delete_at", Type: field.TypeUint32},
 	}
-	// EmptiesTable holds the schema information for the "empties" table.
-	EmptiesTable = &schema.Table{
-		Name:       "empties",
-		Columns:    EmptiesColumns,
-		PrimaryKey: []*schema.Column{EmptiesColumns[0]},
+	// ServiceApIsTable holds the schema information for the "service_ap_is" table.
+	ServiceApIsTable = &schema.Table{
+		Name:       "service_ap_is",
+		Columns:    ServiceApIsColumns,
+		PrimaryKey: []*schema.Column{ServiceApIsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "serviceapi_domain_method_path",
+				Unique:  true,
+				Columns: []*schema.Column{ServiceApIsColumns[1], ServiceApIsColumns[2], ServiceApIsColumns[3]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		EmptiesTable,
+		ServiceApIsTable,
 	}
 )
 

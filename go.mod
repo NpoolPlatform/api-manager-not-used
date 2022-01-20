@@ -10,6 +10,7 @@ require (
 	github.com/armon/go-metrics v0.3.9 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect

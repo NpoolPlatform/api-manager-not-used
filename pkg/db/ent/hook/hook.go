@@ -9,15 +9,15 @@ import (
 	"github.com/NpoolPlatform/api-manager/pkg/db/ent"
 )
 
-// The EmptyFunc type is an adapter to allow the use of ordinary
-// function as Empty mutator.
-type EmptyFunc func(context.Context, *ent.EmptyMutation) (ent.Value, error)
+// The ServiceAPIFunc type is an adapter to allow the use of ordinary
+// function as ServiceAPI mutator.
+type ServiceAPIFunc func(context.Context, *ent.ServiceAPIMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f EmptyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.EmptyMutation)
+func (f ServiceAPIFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ServiceAPIMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmptyMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ServiceAPIMutation", m)
 	}
 	return f(ctx, mv)
 }

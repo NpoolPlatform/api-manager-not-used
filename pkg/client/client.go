@@ -18,7 +18,7 @@ import (
 
 func reliableRegister(apis *apimgr.ServiceApis) {
 	for {
-		conn, err := grpc2.GetGRPCConn(conatant.ServiceName, grpc2.GRPCTAG)
+		conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
 		if err != nil {
 			logger.Sugar().Errorf("fail get api manager connection: %v", err)
 			time.Sleep(time.Minute)
@@ -29,10 +29,12 @@ func reliableRegister(apis *apimgr.ServiceApis) {
 
 		ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
 
-		err = cli.Register(ctx, &apimgr.RegisterRequest{
+		_, err = cli.Register(ctx, &apimgr.RegisterRequest{
 			Info: apis,
 		})
 		if err == nil {
+			cancel()
+			conn.Close()
 			return
 		}
 
