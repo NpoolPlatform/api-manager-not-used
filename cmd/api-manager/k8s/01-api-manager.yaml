@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-sample
+  name: api-manager
   namespace: kube-system
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: service-sample
+      app: api-manager
   template:
     metadata:
       labels:
-        app: service-sample
+        app: api-manager
     spec:
       containers:
-      - name: service-sample
-        image: uhub.service.ucloud.cn/entropypool/service-sample:latest
+      - name: api-manager
+        image: uhub.service.ucloud.cn/entropypool/api-manager:latest
         imagePullPolicy: Always
         env:
         - name: ENV_ENVIRONMENT_TARGET
@@ -42,12 +42,18 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-sample
+  name: api-manager
   namespace: kube-system
 spec:
   ports:
-  - name: api
-    port: 32759
-    targetPort: 32759
+  - name: http
+    port: 50220
+    targetPort: 50220
+  - name: grpc
+    port: 50221
+    targetPort: 50221
+  - name: prometheus
+    port: 50222
+    targetPort: 50222
   selector:
-    app: service-sample
+    app: api-manager

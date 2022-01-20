@@ -1,0 +1,10 @@
+---
+config:
+  hostname: "api-manager.npool.top"
+  http_port: 50220
+  grpc_port: 50221
+  healthz_port: 50222
+  appid: "89089012783789789719823798127398"
+  serviceid: "151e0f10-79cd-11ec-b17c-069013a3cb9a"
+  logdir: "./"
+  apolloAccessKey: "0147fb70b815403790e8634b899fac07"

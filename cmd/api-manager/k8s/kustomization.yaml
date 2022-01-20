@@ -1,0 +1,6 @@
+commonLabels:
+  # app: api-manager
+
+resources:
+- 01-api-manager.yaml
+- 02-ingress.yaml
