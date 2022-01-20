@@ -29,7 +29,7 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 	}
 
 	for _, path := range in.GetInfo().GetPaths() {
-		_, err := tx.
+		err := tx.
 			ServiceAPI.
 			Create().
 			SetDomains([]string{}).
@@ -38,7 +38,9 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 			SetPath(path.GetPath()).
 			SetExported(path.GetExported()).
 			SetPathPrefix(in.GetInfo().GetPathPrefix()).
-			Save(ctx)
+			OnConflict().
+			UpdateNewValues().
+			Exec(ctx)
 		if err != nil {
 			if rerr := tx.Rollback(); rerr != nil {
 				return nil, xerrors.Errorf("fail rollback create service api: %v (%v)", rerr, err)
