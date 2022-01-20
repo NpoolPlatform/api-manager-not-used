@@ -91,10 +91,10 @@ func IDLTE(id uuid.UUID) predicate.ServiceAPI {
 	})
 }
 
-// Domain applies equality check predicate on the "domain" field. It's identical to DomainEQ.
-func Domain(v string) predicate.ServiceAPI {
+// ServiceName applies equality check predicate on the "service_name" field. It's identical to ServiceNameEQ.
+func ServiceName(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDomain), v))
+		s.Where(sql.EQ(s.C(FieldServiceName), v))
 	})
 }
 
@@ -147,22 +147,22 @@ func DeleteAt(v uint32) predicate.ServiceAPI {
 	})
 }
 
-// DomainEQ applies the EQ predicate on the "domain" field.
-func DomainEQ(v string) predicate.ServiceAPI {
+// ServiceNameEQ applies the EQ predicate on the "service_name" field.
+func ServiceNameEQ(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDomain), v))
+		s.Where(sql.EQ(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainNEQ applies the NEQ predicate on the "domain" field.
-func DomainNEQ(v string) predicate.ServiceAPI {
+// ServiceNameNEQ applies the NEQ predicate on the "service_name" field.
+func ServiceNameNEQ(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDomain), v))
+		s.Where(sql.NEQ(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainIn applies the In predicate on the "domain" field.
-func DomainIn(vs ...string) predicate.ServiceAPI {
+// ServiceNameIn applies the In predicate on the "service_name" field.
+func ServiceNameIn(vs ...string) predicate.ServiceAPI {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -174,12 +174,12 @@ func DomainIn(vs ...string) predicate.ServiceAPI {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldDomain), v...))
+		s.Where(sql.In(s.C(FieldServiceName), v...))
 	})
 }
 
-// DomainNotIn applies the NotIn predicate on the "domain" field.
-func DomainNotIn(vs ...string) predicate.ServiceAPI {
+// ServiceNameNotIn applies the NotIn predicate on the "service_name" field.
+func ServiceNameNotIn(vs ...string) predicate.ServiceAPI {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -191,70 +191,70 @@ func DomainNotIn(vs ...string) predicate.ServiceAPI {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldDomain), v...))
+		s.Where(sql.NotIn(s.C(FieldServiceName), v...))
 	})
 }
 
-// DomainGT applies the GT predicate on the "domain" field.
-func DomainGT(v string) predicate.ServiceAPI {
+// ServiceNameGT applies the GT predicate on the "service_name" field.
+func ServiceNameGT(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDomain), v))
+		s.Where(sql.GT(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainGTE applies the GTE predicate on the "domain" field.
-func DomainGTE(v string) predicate.ServiceAPI {
+// ServiceNameGTE applies the GTE predicate on the "service_name" field.
+func ServiceNameGTE(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDomain), v))
+		s.Where(sql.GTE(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainLT applies the LT predicate on the "domain" field.
-func DomainLT(v string) predicate.ServiceAPI {
+// ServiceNameLT applies the LT predicate on the "service_name" field.
+func ServiceNameLT(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDomain), v))
+		s.Where(sql.LT(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainLTE applies the LTE predicate on the "domain" field.
-func DomainLTE(v string) predicate.ServiceAPI {
+// ServiceNameLTE applies the LTE predicate on the "service_name" field.
+func ServiceNameLTE(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDomain), v))
+		s.Where(sql.LTE(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainContains applies the Contains predicate on the "domain" field.
-func DomainContains(v string) predicate.ServiceAPI {
+// ServiceNameContains applies the Contains predicate on the "service_name" field.
+func ServiceNameContains(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldDomain), v))
+		s.Where(sql.Contains(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainHasPrefix applies the HasPrefix predicate on the "domain" field.
-func DomainHasPrefix(v string) predicate.ServiceAPI {
+// ServiceNameHasPrefix applies the HasPrefix predicate on the "service_name" field.
+func ServiceNameHasPrefix(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldDomain), v))
+		s.Where(sql.HasPrefix(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainHasSuffix applies the HasSuffix predicate on the "domain" field.
-func DomainHasSuffix(v string) predicate.ServiceAPI {
+// ServiceNameHasSuffix applies the HasSuffix predicate on the "service_name" field.
+func ServiceNameHasSuffix(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldDomain), v))
+		s.Where(sql.HasSuffix(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainEqualFold applies the EqualFold predicate on the "domain" field.
-func DomainEqualFold(v string) predicate.ServiceAPI {
+// ServiceNameEqualFold applies the EqualFold predicate on the "service_name" field.
+func ServiceNameEqualFold(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldDomain), v))
+		s.Where(sql.EqualFold(s.C(FieldServiceName), v))
 	})
 }
 
-// DomainContainsFold applies the ContainsFold predicate on the "domain" field.
-func DomainContainsFold(v string) predicate.ServiceAPI {
+// ServiceNameContainsFold applies the ContainsFold predicate on the "service_name" field.
+func ServiceNameContainsFold(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldDomain), v))
+		s.Where(sql.ContainsFold(s.C(FieldServiceName), v))
 	})
 }
 

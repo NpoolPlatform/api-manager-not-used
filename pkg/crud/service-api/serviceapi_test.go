@@ -24,6 +24,9 @@ func init() {
 }
 
 func TestCRUD(t *testing.T) {
+	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
+		return
+	}
 	apis := npool.ServiceApis{
 		ServiceName: fmt.Sprintf("test-app.npool.top-%v", uuid.New()),
 		PathPrefix:  "/api/test-app",

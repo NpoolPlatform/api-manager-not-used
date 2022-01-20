@@ -32,7 +32,8 @@ type ServiceAPIMutation struct {
 	op            Op
 	typ           string
 	id            *uuid.UUID
-	domain        *string
+	domains       *[]string
+	service_name  *string
 	method        *string
 	_path         *string
 	exported      *bool
@@ -134,40 +135,76 @@ func (m *ServiceAPIMutation) ID() (id uuid.UUID, exists bool) {
 	return *m.id, true
 }
 
-// SetDomain sets the "domain" field.
-func (m *ServiceAPIMutation) SetDomain(s string) {
-	m.domain = &s
+// SetDomains sets the "domains" field.
+func (m *ServiceAPIMutation) SetDomains(s []string) {
+	m.domains = &s
 }
 
-// Domain returns the value of the "domain" field in the mutation.
-func (m *ServiceAPIMutation) Domain() (r string, exists bool) {
-	v := m.domain
+// Domains returns the value of the "domains" field in the mutation.
+func (m *ServiceAPIMutation) Domains() (r []string, exists bool) {
+	v := m.domains
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDomain returns the old "domain" field's value of the ServiceAPI entity.
+// OldDomains returns the old "domains" field's value of the ServiceAPI entity.
 // If the ServiceAPI object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ServiceAPIMutation) OldDomain(ctx context.Context) (v string, err error) {
+func (m *ServiceAPIMutation) OldDomains(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDomain is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldDomains is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDomain requires an ID field in the mutation")
+		return v, fmt.Errorf("OldDomains requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDomain: %w", err)
+		return v, fmt.Errorf("querying old value for OldDomains: %w", err)
 	}
-	return oldValue.Domain, nil
+	return oldValue.Domains, nil
 }
 
-// ResetDomain resets all changes to the "domain" field.
-func (m *ServiceAPIMutation) ResetDomain() {
-	m.domain = nil
+// ResetDomains resets all changes to the "domains" field.
+func (m *ServiceAPIMutation) ResetDomains() {
+	m.domains = nil
+}
+
+// SetServiceName sets the "service_name" field.
+func (m *ServiceAPIMutation) SetServiceName(s string) {
+	m.service_name = &s
+}
+
+// ServiceName returns the value of the "service_name" field in the mutation.
+func (m *ServiceAPIMutation) ServiceName() (r string, exists bool) {
+	v := m.service_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServiceName returns the old "service_name" field's value of the ServiceAPI entity.
+// If the ServiceAPI object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServiceAPIMutation) OldServiceName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldServiceName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldServiceName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServiceName: %w", err)
+	}
+	return oldValue.ServiceName, nil
+}
+
+// ResetServiceName resets all changes to the "service_name" field.
+func (m *ServiceAPIMutation) ResetServiceName() {
+	m.service_name = nil
 }
 
 // SetMethod sets the "method" field.
@@ -501,9 +538,12 @@ func (m *ServiceAPIMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ServiceAPIMutation) Fields() []string {
-	fields := make([]string, 0, 8)
-	if m.domain != nil {
-		fields = append(fields, serviceapi.FieldDomain)
+	fields := make([]string, 0, 9)
+	if m.domains != nil {
+		fields = append(fields, serviceapi.FieldDomains)
+	}
+	if m.service_name != nil {
+		fields = append(fields, serviceapi.FieldServiceName)
 	}
 	if m.method != nil {
 		fields = append(fields, serviceapi.FieldMethod)
@@ -534,8 +574,10 @@ func (m *ServiceAPIMutation) Fields() []string {
 // schema.
 func (m *ServiceAPIMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case serviceapi.FieldDomain:
-		return m.Domain()
+	case serviceapi.FieldDomains:
+		return m.Domains()
+	case serviceapi.FieldServiceName:
+		return m.ServiceName()
 	case serviceapi.FieldMethod:
 		return m.Method()
 	case serviceapi.FieldPath:
@@ -559,8 +601,10 @@ func (m *ServiceAPIMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ServiceAPIMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case serviceapi.FieldDomain:
-		return m.OldDomain(ctx)
+	case serviceapi.FieldDomains:
+		return m.OldDomains(ctx)
+	case serviceapi.FieldServiceName:
+		return m.OldServiceName(ctx)
 	case serviceapi.FieldMethod:
 		return m.OldMethod(ctx)
 	case serviceapi.FieldPath:
@@ -584,12 +628,19 @@ func (m *ServiceAPIMutation) OldField(ctx context.Context, name string) (ent.Val
 // type.
 func (m *ServiceAPIMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case serviceapi.FieldDomain:
+	case serviceapi.FieldDomains:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDomains(v)
+		return nil
+	case serviceapi.FieldServiceName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDomain(v)
+		m.SetServiceName(v)
 		return nil
 	case serviceapi.FieldMethod:
 		v, ok := value.(string)
@@ -728,8 +779,11 @@ func (m *ServiceAPIMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ServiceAPIMutation) ResetField(name string) error {
 	switch name {
-	case serviceapi.FieldDomain:
-		m.ResetDomain()
+	case serviceapi.FieldDomains:
+		m.ResetDomains()
+		return nil
+	case serviceapi.FieldServiceName:
+		m.ResetServiceName()
 		return nil
 	case serviceapi.FieldMethod:
 		m.ResetMethod()

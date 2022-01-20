@@ -11,7 +11,8 @@ var (
 	// ServiceApIsColumns holds the columns for the "service_ap_is" table.
 	ServiceApIsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "domain", Type: field.TypeString},
+		{Name: "domains", Type: field.TypeJSON},
+		{Name: "service_name", Type: field.TypeString},
 		{Name: "method", Type: field.TypeString},
 		{Name: "path", Type: field.TypeString},
 		{Name: "exported", Type: field.TypeBool},
@@ -27,9 +28,9 @@ var (
 		PrimaryKey: []*schema.Column{ServiceApIsColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "serviceapi_domain_method_path",
+				Name:    "serviceapi_service_name_method_path",
 				Unique:  true,
-				Columns: []*schema.Column{ServiceApIsColumns[1], ServiceApIsColumns[2], ServiceApIsColumns[3]},
+				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[3], ServiceApIsColumns[4]},
 			},
 		},
 	}

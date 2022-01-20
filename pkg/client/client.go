@@ -46,7 +46,7 @@ func reliableRegister(apis *apimgr.ServiceApis) {
 	}
 }
 
-func Register(mux *runtime.ServeMux) {
+func MuxApis(mux *runtime.ServeMux) *apimgr.ServiceApis {
 	apis := &apimgr.ServiceApis{
 		ServiceName: config.GetStringValueWithNameSpace("", config.KeyHostname),
 	}
@@ -66,5 +66,10 @@ func Register(mux *runtime.ServeMux) {
 		}
 	}
 
+	return apis
+}
+
+func Register(mux *runtime.ServeMux) {
+	apis := MuxApis(mux)
 	go reliableRegister(apis)
 }

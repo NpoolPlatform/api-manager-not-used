@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -16,8 +17,10 @@ type ServiceAPI struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// Domain holds the value of the "domain" field.
-	Domain string `json:"domain,omitempty"`
+	// Domains holds the value of the "domains" field.
+	Domains []string `json:"domains,omitempty"`
+	// ServiceName holds the value of the "service_name" field.
+	ServiceName string `json:"service_name,omitempty"`
 	// Method holds the value of the "method" field.
 	Method string `json:"method,omitempty"`
 	// Path holds the value of the "path" field.
@@ -39,11 +42,13 @@ func (*ServiceAPI) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case serviceapi.FieldDomains:
+			values[i] = new([]byte)
 		case serviceapi.FieldExported:
 			values[i] = new(sql.NullBool)
 		case serviceapi.FieldCreateAt, serviceapi.FieldUpdateAt, serviceapi.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case serviceapi.FieldDomain, serviceapi.FieldMethod, serviceapi.FieldPath, serviceapi.FieldPathPrefix:
+		case serviceapi.FieldServiceName, serviceapi.FieldMethod, serviceapi.FieldPath, serviceapi.FieldPathPrefix:
 			values[i] = new(sql.NullString)
 		case serviceapi.FieldID:
 			values[i] = new(uuid.UUID)
@@ -68,11 +73,19 @@ func (sa *ServiceAPI) assignValues(columns []string, values []interface{}) error
 			} else if value != nil {
 				sa.ID = *value
 			}
-		case serviceapi.FieldDomain:
+		case serviceapi.FieldDomains:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field domains", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &sa.Domains); err != nil {
+					return fmt.Errorf("unmarshal field domains: %w", err)
+				}
+			}
+		case serviceapi.FieldServiceName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field domain", values[i])
+				return fmt.Errorf("unexpected type %T for field service_name", values[i])
 			} else if value.Valid {
-				sa.Domain = value.String
+				sa.ServiceName = value.String
 			}
 		case serviceapi.FieldMethod:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -144,8 +157,10 @@ func (sa *ServiceAPI) String() string {
 	var builder strings.Builder
 	builder.WriteString("ServiceAPI(")
 	builder.WriteString(fmt.Sprintf("id=%v", sa.ID))
-	builder.WriteString(", domain=")
-	builder.WriteString(sa.Domain)
+	builder.WriteString(", domains=")
+	builder.WriteString(fmt.Sprintf("%v", sa.Domains))
+	builder.WriteString(", service_name=")
+	builder.WriteString(sa.ServiceName)
 	builder.WriteString(", method=")
 	builder.WriteString(sa.Method)
 	builder.WriteString(", path=")

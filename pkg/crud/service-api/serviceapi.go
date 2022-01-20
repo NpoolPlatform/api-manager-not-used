@@ -32,7 +32,8 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 		_, err := tx.
 			ServiceAPI.
 			Create().
-			SetDomain(in.GetInfo().GetServiceName()).
+			SetDomains([]string{}).
+			SetServiceName(in.GetInfo().GetServiceName()).
 			SetMethod(path.GetMethod()).
 			SetPath(path.GetPath()).
 			SetExported(path.GetExported()).
@@ -77,7 +78,8 @@ func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisRespo
 	for _, info := range infos {
 		apis = append(apis, &npool.ServicePath{
 			ID:          info.ID.String(),
-			ServiceName: info.Domain,
+			Domains:     info.Domains,
+			ServiceName: info.ServiceName,
 			Method:      info.Method,
 			Path:        info.Path,
 			Exported:    info.Exported,

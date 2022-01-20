@@ -21,7 +21,8 @@ func (ServiceAPI) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
 			Unique(),
-		field.String("domain"),
+		field.JSON("domains", []string{}),
+		field.String("service_name"),
 		field.String("method"),
 		field.String("path"),
 		field.Bool("exported"),
@@ -51,7 +52,7 @@ func (ServiceAPI) Edges() []ent.Edge {
 
 func (ServiceAPI) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("domain", "method", "path").
+		index.Fields("service_name", "method", "path").
 			Unique(),
 	}
 }

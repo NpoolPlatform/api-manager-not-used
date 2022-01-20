@@ -23,9 +23,15 @@ type ServiceAPICreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetDomain sets the "domain" field.
-func (sac *ServiceAPICreate) SetDomain(s string) *ServiceAPICreate {
-	sac.mutation.SetDomain(s)
+// SetDomains sets the "domains" field.
+func (sac *ServiceAPICreate) SetDomains(s []string) *ServiceAPICreate {
+	sac.mutation.SetDomains(s)
+	return sac
+}
+
+// SetServiceName sets the "service_name" field.
+func (sac *ServiceAPICreate) SetServiceName(s string) *ServiceAPICreate {
+	sac.mutation.SetServiceName(s)
 	return sac
 }
 
@@ -192,8 +198,11 @@ func (sac *ServiceAPICreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sac *ServiceAPICreate) check() error {
-	if _, ok := sac.mutation.Domain(); !ok {
-		return &ValidationError{Name: "domain", err: errors.New(`ent: missing required field "domain"`)}
+	if _, ok := sac.mutation.Domains(); !ok {
+		return &ValidationError{Name: "domains", err: errors.New(`ent: missing required field "domains"`)}
+	}
+	if _, ok := sac.mutation.ServiceName(); !ok {
+		return &ValidationError{Name: "service_name", err: errors.New(`ent: missing required field "service_name"`)}
 	}
 	if _, ok := sac.mutation.Method(); !ok {
 		return &ValidationError{Name: "method", err: errors.New(`ent: missing required field "method"`)}
@@ -249,13 +258,21 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := sac.mutation.Domain(); ok {
+	if value, ok := sac.mutation.Domains(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: serviceapi.FieldDomains,
+		})
+		_node.Domains = value
+	}
+	if value, ok := sac.mutation.ServiceName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: serviceapi.FieldDomain,
+			Column: serviceapi.FieldServiceName,
 		})
-		_node.Domain = value
+		_node.ServiceName = value
 	}
 	if value, ok := sac.mutation.Method(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -320,7 +337,7 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.ServiceAPI.Create().
-//		SetDomain(v).
+//		SetDomains(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -329,7 +346,7 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ServiceAPIUpsert) {
-//			SetDomain(v+v).
+//			SetDomains(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -367,15 +384,27 @@ type (
 	}
 )
 
-// SetDomain sets the "domain" field.
-func (u *ServiceAPIUpsert) SetDomain(v string) *ServiceAPIUpsert {
-	u.Set(serviceapi.FieldDomain, v)
+// SetDomains sets the "domains" field.
+func (u *ServiceAPIUpsert) SetDomains(v []string) *ServiceAPIUpsert {
+	u.Set(serviceapi.FieldDomains, v)
 	return u
 }
 
-// UpdateDomain sets the "domain" field to the value that was provided on create.
-func (u *ServiceAPIUpsert) UpdateDomain() *ServiceAPIUpsert {
-	u.SetExcluded(serviceapi.FieldDomain)
+// UpdateDomains sets the "domains" field to the value that was provided on create.
+func (u *ServiceAPIUpsert) UpdateDomains() *ServiceAPIUpsert {
+	u.SetExcluded(serviceapi.FieldDomains)
+	return u
+}
+
+// SetServiceName sets the "service_name" field.
+func (u *ServiceAPIUpsert) SetServiceName(v string) *ServiceAPIUpsert {
+	u.Set(serviceapi.FieldServiceName, v)
+	return u
+}
+
+// UpdateServiceName sets the "service_name" field to the value that was provided on create.
+func (u *ServiceAPIUpsert) UpdateServiceName() *ServiceAPIUpsert {
+	u.SetExcluded(serviceapi.FieldServiceName)
 	return u
 }
 
@@ -513,17 +542,31 @@ func (u *ServiceAPIUpsertOne) Update(set func(*ServiceAPIUpsert)) *ServiceAPIUps
 	return u
 }
 
-// SetDomain sets the "domain" field.
-func (u *ServiceAPIUpsertOne) SetDomain(v string) *ServiceAPIUpsertOne {
+// SetDomains sets the "domains" field.
+func (u *ServiceAPIUpsertOne) SetDomains(v []string) *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.SetDomain(v)
+		s.SetDomains(v)
 	})
 }
 
-// UpdateDomain sets the "domain" field to the value that was provided on create.
-func (u *ServiceAPIUpsertOne) UpdateDomain() *ServiceAPIUpsertOne {
+// UpdateDomains sets the "domains" field to the value that was provided on create.
+func (u *ServiceAPIUpsertOne) UpdateDomains() *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.UpdateDomain()
+		s.UpdateDomains()
+	})
+}
+
+// SetServiceName sets the "service_name" field.
+func (u *ServiceAPIUpsertOne) SetServiceName(v string) *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.SetServiceName(v)
+	})
+}
+
+// UpdateServiceName sets the "service_name" field to the value that was provided on create.
+func (u *ServiceAPIUpsertOne) UpdateServiceName() *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.UpdateServiceName()
 	})
 }
 
@@ -757,7 +800,7 @@ func (sacb *ServiceAPICreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ServiceAPIUpsert) {
-//			SetDomain(v+v).
+//			SetDomains(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -841,17 +884,31 @@ func (u *ServiceAPIUpsertBulk) Update(set func(*ServiceAPIUpsert)) *ServiceAPIUp
 	return u
 }
 
-// SetDomain sets the "domain" field.
-func (u *ServiceAPIUpsertBulk) SetDomain(v string) *ServiceAPIUpsertBulk {
+// SetDomains sets the "domains" field.
+func (u *ServiceAPIUpsertBulk) SetDomains(v []string) *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.SetDomain(v)
+		s.SetDomains(v)
 	})
 }
 
-// UpdateDomain sets the "domain" field to the value that was provided on create.
-func (u *ServiceAPIUpsertBulk) UpdateDomain() *ServiceAPIUpsertBulk {
+// UpdateDomains sets the "domains" field to the value that was provided on create.
+func (u *ServiceAPIUpsertBulk) UpdateDomains() *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.UpdateDomain()
+		s.UpdateDomains()
+	})
+}
+
+// SetServiceName sets the "service_name" field.
+func (u *ServiceAPIUpsertBulk) SetServiceName(v string) *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.SetServiceName(v)
+	})
+}
+
+// UpdateServiceName sets the "service_name" field to the value that was provided on create.
+func (u *ServiceAPIUpsertBulk) UpdateServiceName() *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.UpdateServiceName()
 	})
 }
 

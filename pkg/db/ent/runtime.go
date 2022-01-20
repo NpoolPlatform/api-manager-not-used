@@ -15,17 +15,17 @@ func init() {
 	serviceapiFields := schema.ServiceAPI{}.Fields()
 	_ = serviceapiFields
 	// serviceapiDescCreateAt is the schema descriptor for create_at field.
-	serviceapiDescCreateAt := serviceapiFields[6].Descriptor()
+	serviceapiDescCreateAt := serviceapiFields[7].Descriptor()
 	// serviceapi.DefaultCreateAt holds the default value on creation for the create_at field.
 	serviceapi.DefaultCreateAt = serviceapiDescCreateAt.Default.(func() uint32)
 	// serviceapiDescUpdateAt is the schema descriptor for update_at field.
-	serviceapiDescUpdateAt := serviceapiFields[7].Descriptor()
+	serviceapiDescUpdateAt := serviceapiFields[8].Descriptor()
 	// serviceapi.DefaultUpdateAt holds the default value on creation for the update_at field.
 	serviceapi.DefaultUpdateAt = serviceapiDescUpdateAt.Default.(func() uint32)
 	// serviceapi.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	serviceapi.UpdateDefaultUpdateAt = serviceapiDescUpdateAt.UpdateDefault.(func() uint32)
 	// serviceapiDescDeleteAt is the schema descriptor for delete_at field.
-	serviceapiDescDeleteAt := serviceapiFields[8].Descriptor()
+	serviceapiDescDeleteAt := serviceapiFields[9].Descriptor()
 	// serviceapi.DefaultDeleteAt holds the default value on creation for the delete_at field.
 	serviceapi.DefaultDeleteAt = serviceapiDescDeleteAt.Default.(func() uint32)
 	// serviceapiDescID is the schema descriptor for id field.

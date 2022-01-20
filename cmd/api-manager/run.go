@@ -10,6 +10,8 @@ import (
 	msg "github.com/NpoolPlatform/api-manager/pkg/message/message"
 	msgsrv "github.com/NpoolPlatform/api-manager/pkg/message/server"
 
+	servicecli "github.com/NpoolPlatform/api-manager/pkg/client"
+	serviceapi "github.com/NpoolPlatform/api-manager/pkg/middleware/service-api"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
@@ -17,6 +19,7 @@ import (
 
 	cli "github.com/urfave/cli/v2"
 
+	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 )
 
@@ -44,6 +47,7 @@ var runCmd = &cli.Command{
 
 		go msglistener.Listen()
 		go msgSender()
+		go serviceapi.Watcher()
 
 		return grpc2.RunGRPCGateWay(rpcGatewayRegister)
 	},
@@ -55,13 +59,19 @@ func rpcRegister(server grpc.ServiceRegistrar) error {
 }
 
 func rpcGatewayRegister(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	return api.RegisterGateway(mux, endpoint, opts)
+	err := api.RegisterGateway(mux, endpoint, opts)
+	if err != nil {
+		return xerrors.Errorf("fail register gateway: %v", err)
+	}
+	apis := servicecli.MuxApis(mux)
+	serviceapi.ReliableRegister(apis)
+
+	return nil
 }
 
 func msgSender() {
 	id := 0
 	for {
-		logger.Sugar().Infof("send example")
 		err := msgsrv.PublishExample(&msg.Example{
 			ID:      id,
 			Example: "hello world",
