@@ -5,7 +5,7 @@ go 1.16
 require (
 	entgo.io/ent v0.9.1
 	github.com/BurntSushi/toml v0.4.1 // indirect
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20211222114515-4928e6cf3f1f
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592
 	github.com/NpoolPlatform/message v0.0.0-20220120085626-0bd90695bbe6
 	github.com/armon/go-metrics v0.3.9 // indirect
 	github.com/fatih/color v1.13.0 // indirect
