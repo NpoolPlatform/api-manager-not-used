@@ -57,5 +57,35 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 }
 
 func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisResponse, error) {
-	return nil, nil
+	ctx, cancel := context.WithTimeout(ctx, grpcTimeout)
+	defer cancel()
+
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	infos, err := cli.
+		ServiceAPI.
+		Query().
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query service api: %v", err)
+	}
+
+	apis := []*npool.ServicePath{}
+	for _, info := range infos {
+		apis = append(apis, &npool.ServicePath{
+			ID:          info.ID.String(),
+			ServiceName: info.Domain,
+			Method:      info.Method,
+			Path:        info.Path,
+			Exported:    info.Exported,
+			PathPrefix:  info.PathPrefix,
+		})
+	}
+
+	return &npool.GetApisResponse{
+		Infos: apis,
+	}, nil
 }
