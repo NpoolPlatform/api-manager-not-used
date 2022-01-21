@@ -3,4 +3,5 @@ commonLabels:
 
 resources:
 - 01-api-manager.yaml
-- 02-ingress.yaml
+- 02-treafik-ingress.yaml
+- 03-nginx-ingress.yaml
