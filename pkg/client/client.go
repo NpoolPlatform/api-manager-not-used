@@ -14,6 +14,8 @@ import (
 	apimgr "github.com/NpoolPlatform/message/npool/apimgr"
 
 	constant "github.com/NpoolPlatform/api-manager/pkg/message/const"
+
+	"google.golang.org/grpc"
 )
 
 func reliableRegister(apis *apimgr.ServiceApis) {
@@ -49,6 +51,7 @@ func reliableRegister(apis *apimgr.ServiceApis) {
 func MuxApis(mux *runtime.ServeMux) *apimgr.ServiceApis {
 	apis := &apimgr.ServiceApis{
 		ServiceName: config.GetStringValueWithNameSpace("", config.KeyHostname),
+		Protocol:    "http",
 	}
 
 	valueOfMux := reflect.ValueOf(mux).Elem()
@@ -71,5 +74,29 @@ func MuxApis(mux *runtime.ServeMux) *apimgr.ServiceApis {
 
 func Register(mux *runtime.ServeMux) {
 	apis := MuxApis(mux)
+	go reliableRegister(apis)
+}
+
+func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
+	srvInfo := server.(*grpc.Server).GetServiceInfo()
+	apis := &apimgr.ServiceApis{
+		ServiceName: config.GetStringValueWithNameSpace("", config.KeyHostname),
+		Protocol:    "grpc",
+	}
+
+	for _, info := range srvInfo {
+		for _, method := range info.Methods {
+			apis.Paths = append(apis.Paths, &apimgr.Path{
+				Method: "NONE",
+				Path:   method.Name,
+			})
+		}
+	}
+
+	return apis
+}
+
+func RegisterGRPC(server grpc.ServiceRegistrar) {
+	apis := grpcApis(server)
 	go reliableRegister(apis)
 }
