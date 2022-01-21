@@ -91,6 +91,13 @@ func IDLTE(id uuid.UUID) predicate.ServiceAPI {
 	})
 }
 
+// Protocol applies equality check predicate on the "protocol" field. It's identical to ProtocolEQ.
+func Protocol(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProtocol), v))
+	})
+}
+
 // ServiceName applies equality check predicate on the "service_name" field. It's identical to ServiceNameEQ.
 func ServiceName(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
@@ -144,6 +151,117 @@ func UpdateAt(v uint32) predicate.ServiceAPI {
 func DeleteAt(v uint32) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDeleteAt), v))
+	})
+}
+
+// ProtocolEQ applies the EQ predicate on the "protocol" field.
+func ProtocolEQ(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolNEQ applies the NEQ predicate on the "protocol" field.
+func ProtocolNEQ(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolIn applies the In predicate on the "protocol" field.
+func ProtocolIn(vs ...string) predicate.ServiceAPI {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProtocol), v...))
+	})
+}
+
+// ProtocolNotIn applies the NotIn predicate on the "protocol" field.
+func ProtocolNotIn(vs ...string) predicate.ServiceAPI {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProtocol), v...))
+	})
+}
+
+// ProtocolGT applies the GT predicate on the "protocol" field.
+func ProtocolGT(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolGTE applies the GTE predicate on the "protocol" field.
+func ProtocolGTE(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolLT applies the LT predicate on the "protocol" field.
+func ProtocolLT(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolLTE applies the LTE predicate on the "protocol" field.
+func ProtocolLTE(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolContains applies the Contains predicate on the "protocol" field.
+func ProtocolContains(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolHasPrefix applies the HasPrefix predicate on the "protocol" field.
+func ProtocolHasPrefix(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolHasSuffix applies the HasSuffix predicate on the "protocol" field.
+func ProtocolHasSuffix(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolEqualFold applies the EqualFold predicate on the "protocol" field.
+func ProtocolEqualFold(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldProtocol), v))
+	})
+}
+
+// ProtocolContainsFold applies the ContainsFold predicate on the "protocol" field.
+func ProtocolContainsFold(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldProtocol), v))
 	})
 }
 

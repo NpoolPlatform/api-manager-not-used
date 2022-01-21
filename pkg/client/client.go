@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"time"
 	"unsafe"
@@ -84,11 +85,11 @@ func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 		Protocol:    "grpc",
 	}
 
-	for _, info := range srvInfo {
+	for key, info := range srvInfo {
 		for _, method := range info.Methods {
 			apis.Paths = append(apis.Paths, &apimgr.Path{
 				Method: "NONE",
-				Path:   method.Name,
+				Path:   fmt.Sprintf("%v/%v", key, method.Name),
 			})
 		}
 	}

@@ -21,8 +21,9 @@ func (ServiceAPI) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
 			Unique(),
-		field.JSON("domains", []string{}),
+		field.String("protocol"),
 		field.String("service_name"),
+		field.JSON("domains", []string{}),
 		field.String("method"),
 		field.String("path"),
 		field.Bool("exported"),

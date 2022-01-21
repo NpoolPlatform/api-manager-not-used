@@ -32,8 +32,9 @@ type ServiceAPIMutation struct {
 	op            Op
 	typ           string
 	id            *uuid.UUID
-	domains       *[]string
+	protocol      *string
 	service_name  *string
+	domains       *[]string
 	method        *string
 	_path         *string
 	exported      *bool
@@ -135,40 +136,40 @@ func (m *ServiceAPIMutation) ID() (id uuid.UUID, exists bool) {
 	return *m.id, true
 }
 
-// SetDomains sets the "domains" field.
-func (m *ServiceAPIMutation) SetDomains(s []string) {
-	m.domains = &s
+// SetProtocol sets the "protocol" field.
+func (m *ServiceAPIMutation) SetProtocol(s string) {
+	m.protocol = &s
 }
 
-// Domains returns the value of the "domains" field in the mutation.
-func (m *ServiceAPIMutation) Domains() (r []string, exists bool) {
-	v := m.domains
+// Protocol returns the value of the "protocol" field in the mutation.
+func (m *ServiceAPIMutation) Protocol() (r string, exists bool) {
+	v := m.protocol
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDomains returns the old "domains" field's value of the ServiceAPI entity.
+// OldProtocol returns the old "protocol" field's value of the ServiceAPI entity.
 // If the ServiceAPI object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ServiceAPIMutation) OldDomains(ctx context.Context) (v []string, err error) {
+func (m *ServiceAPIMutation) OldProtocol(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDomains is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldProtocol is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDomains requires an ID field in the mutation")
+		return v, fmt.Errorf("OldProtocol requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDomains: %w", err)
+		return v, fmt.Errorf("querying old value for OldProtocol: %w", err)
 	}
-	return oldValue.Domains, nil
+	return oldValue.Protocol, nil
 }
 
-// ResetDomains resets all changes to the "domains" field.
-func (m *ServiceAPIMutation) ResetDomains() {
-	m.domains = nil
+// ResetProtocol resets all changes to the "protocol" field.
+func (m *ServiceAPIMutation) ResetProtocol() {
+	m.protocol = nil
 }
 
 // SetServiceName sets the "service_name" field.
@@ -205,6 +206,42 @@ func (m *ServiceAPIMutation) OldServiceName(ctx context.Context) (v string, err 
 // ResetServiceName resets all changes to the "service_name" field.
 func (m *ServiceAPIMutation) ResetServiceName() {
 	m.service_name = nil
+}
+
+// SetDomains sets the "domains" field.
+func (m *ServiceAPIMutation) SetDomains(s []string) {
+	m.domains = &s
+}
+
+// Domains returns the value of the "domains" field in the mutation.
+func (m *ServiceAPIMutation) Domains() (r []string, exists bool) {
+	v := m.domains
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDomains returns the old "domains" field's value of the ServiceAPI entity.
+// If the ServiceAPI object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServiceAPIMutation) OldDomains(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDomains is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDomains requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDomains: %w", err)
+	}
+	return oldValue.Domains, nil
+}
+
+// ResetDomains resets all changes to the "domains" field.
+func (m *ServiceAPIMutation) ResetDomains() {
+	m.domains = nil
 }
 
 // SetMethod sets the "method" field.
@@ -538,12 +575,15 @@ func (m *ServiceAPIMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ServiceAPIMutation) Fields() []string {
-	fields := make([]string, 0, 9)
-	if m.domains != nil {
-		fields = append(fields, serviceapi.FieldDomains)
+	fields := make([]string, 0, 10)
+	if m.protocol != nil {
+		fields = append(fields, serviceapi.FieldProtocol)
 	}
 	if m.service_name != nil {
 		fields = append(fields, serviceapi.FieldServiceName)
+	}
+	if m.domains != nil {
+		fields = append(fields, serviceapi.FieldDomains)
 	}
 	if m.method != nil {
 		fields = append(fields, serviceapi.FieldMethod)
@@ -574,10 +614,12 @@ func (m *ServiceAPIMutation) Fields() []string {
 // schema.
 func (m *ServiceAPIMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case serviceapi.FieldDomains:
-		return m.Domains()
+	case serviceapi.FieldProtocol:
+		return m.Protocol()
 	case serviceapi.FieldServiceName:
 		return m.ServiceName()
+	case serviceapi.FieldDomains:
+		return m.Domains()
 	case serviceapi.FieldMethod:
 		return m.Method()
 	case serviceapi.FieldPath:
@@ -601,10 +643,12 @@ func (m *ServiceAPIMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ServiceAPIMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case serviceapi.FieldDomains:
-		return m.OldDomains(ctx)
+	case serviceapi.FieldProtocol:
+		return m.OldProtocol(ctx)
 	case serviceapi.FieldServiceName:
 		return m.OldServiceName(ctx)
+	case serviceapi.FieldDomains:
+		return m.OldDomains(ctx)
 	case serviceapi.FieldMethod:
 		return m.OldMethod(ctx)
 	case serviceapi.FieldPath:
@@ -628,12 +672,12 @@ func (m *ServiceAPIMutation) OldField(ctx context.Context, name string) (ent.Val
 // type.
 func (m *ServiceAPIMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case serviceapi.FieldDomains:
-		v, ok := value.([]string)
+	case serviceapi.FieldProtocol:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDomains(v)
+		m.SetProtocol(v)
 		return nil
 	case serviceapi.FieldServiceName:
 		v, ok := value.(string)
@@ -641,6 +685,13 @@ func (m *ServiceAPIMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetServiceName(v)
+		return nil
+	case serviceapi.FieldDomains:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDomains(v)
 		return nil
 	case serviceapi.FieldMethod:
 		v, ok := value.(string)
@@ -779,11 +830,14 @@ func (m *ServiceAPIMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ServiceAPIMutation) ResetField(name string) error {
 	switch name {
-	case serviceapi.FieldDomains:
-		m.ResetDomains()
+	case serviceapi.FieldProtocol:
+		m.ResetProtocol()
 		return nil
 	case serviceapi.FieldServiceName:
 		m.ResetServiceName()
+		return nil
+	case serviceapi.FieldDomains:
+		m.ResetDomains()
 		return nil
 	case serviceapi.FieldMethod:
 		m.ResetMethod()

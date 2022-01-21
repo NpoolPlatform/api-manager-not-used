@@ -11,10 +11,12 @@ const (
 	Label = "service_api"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldDomains holds the string denoting the domains field in the database.
-	FieldDomains = "domains"
+	// FieldProtocol holds the string denoting the protocol field in the database.
+	FieldProtocol = "protocol"
 	// FieldServiceName holds the string denoting the service_name field in the database.
 	FieldServiceName = "service_name"
+	// FieldDomains holds the string denoting the domains field in the database.
+	FieldDomains = "domains"
 	// FieldMethod holds the string denoting the method field in the database.
 	FieldMethod = "method"
 	// FieldPath holds the string denoting the path field in the database.
@@ -36,8 +38,9 @@ const (
 // Columns holds all SQL columns for serviceapi fields.
 var Columns = []string{
 	FieldID,
-	FieldDomains,
+	FieldProtocol,
 	FieldServiceName,
+	FieldDomains,
 	FieldMethod,
 	FieldPath,
 	FieldExported,

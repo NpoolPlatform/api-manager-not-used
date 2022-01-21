@@ -26,15 +26,21 @@ func (sau *ServiceAPIUpdate) Where(ps ...predicate.ServiceAPI) *ServiceAPIUpdate
 	return sau
 }
 
-// SetDomains sets the "domains" field.
-func (sau *ServiceAPIUpdate) SetDomains(s []string) *ServiceAPIUpdate {
-	sau.mutation.SetDomains(s)
+// SetProtocol sets the "protocol" field.
+func (sau *ServiceAPIUpdate) SetProtocol(s string) *ServiceAPIUpdate {
+	sau.mutation.SetProtocol(s)
 	return sau
 }
 
 // SetServiceName sets the "service_name" field.
 func (sau *ServiceAPIUpdate) SetServiceName(s string) *ServiceAPIUpdate {
 	sau.mutation.SetServiceName(s)
+	return sau
+}
+
+// SetDomains sets the "domains" field.
+func (sau *ServiceAPIUpdate) SetDomains(s []string) *ServiceAPIUpdate {
+	sau.mutation.SetDomains(s)
 	return sau
 }
 
@@ -203,11 +209,11 @@ func (sau *ServiceAPIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := sau.mutation.Domains(); ok {
+	if value, ok := sau.mutation.Protocol(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: serviceapi.FieldDomains,
+			Column: serviceapi.FieldProtocol,
 		})
 	}
 	if value, ok := sau.mutation.ServiceName(); ok {
@@ -215,6 +221,13 @@ func (sau *ServiceAPIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: serviceapi.FieldServiceName,
+		})
+	}
+	if value, ok := sau.mutation.Domains(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: serviceapi.FieldDomains,
 		})
 	}
 	if value, ok := sau.mutation.Method(); ok {
@@ -306,15 +319,21 @@ type ServiceAPIUpdateOne struct {
 	mutation *ServiceAPIMutation
 }
 
-// SetDomains sets the "domains" field.
-func (sauo *ServiceAPIUpdateOne) SetDomains(s []string) *ServiceAPIUpdateOne {
-	sauo.mutation.SetDomains(s)
+// SetProtocol sets the "protocol" field.
+func (sauo *ServiceAPIUpdateOne) SetProtocol(s string) *ServiceAPIUpdateOne {
+	sauo.mutation.SetProtocol(s)
 	return sauo
 }
 
 // SetServiceName sets the "service_name" field.
 func (sauo *ServiceAPIUpdateOne) SetServiceName(s string) *ServiceAPIUpdateOne {
 	sauo.mutation.SetServiceName(s)
+	return sauo
+}
+
+// SetDomains sets the "domains" field.
+func (sauo *ServiceAPIUpdateOne) SetDomains(s []string) *ServiceAPIUpdateOne {
+	sauo.mutation.SetDomains(s)
 	return sauo
 }
 
@@ -507,11 +526,11 @@ func (sauo *ServiceAPIUpdateOne) sqlSave(ctx context.Context) (_node *ServiceAPI
 			}
 		}
 	}
-	if value, ok := sauo.mutation.Domains(); ok {
+	if value, ok := sauo.mutation.Protocol(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: serviceapi.FieldDomains,
+			Column: serviceapi.FieldProtocol,
 		})
 	}
 	if value, ok := sauo.mutation.ServiceName(); ok {
@@ -519,6 +538,13 @@ func (sauo *ServiceAPIUpdateOne) sqlSave(ctx context.Context) (_node *ServiceAPI
 			Type:   field.TypeString,
 			Value:  value,
 			Column: serviceapi.FieldServiceName,
+		})
+	}
+	if value, ok := sauo.mutation.Domains(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: serviceapi.FieldDomains,
 		})
 	}
 	if value, ok := sauo.mutation.Method(); ok {

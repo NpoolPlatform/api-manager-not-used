@@ -23,15 +23,21 @@ type ServiceAPICreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetDomains sets the "domains" field.
-func (sac *ServiceAPICreate) SetDomains(s []string) *ServiceAPICreate {
-	sac.mutation.SetDomains(s)
+// SetProtocol sets the "protocol" field.
+func (sac *ServiceAPICreate) SetProtocol(s string) *ServiceAPICreate {
+	sac.mutation.SetProtocol(s)
 	return sac
 }
 
 // SetServiceName sets the "service_name" field.
 func (sac *ServiceAPICreate) SetServiceName(s string) *ServiceAPICreate {
 	sac.mutation.SetServiceName(s)
+	return sac
+}
+
+// SetDomains sets the "domains" field.
+func (sac *ServiceAPICreate) SetDomains(s []string) *ServiceAPICreate {
+	sac.mutation.SetDomains(s)
 	return sac
 }
 
@@ -198,11 +204,14 @@ func (sac *ServiceAPICreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sac *ServiceAPICreate) check() error {
-	if _, ok := sac.mutation.Domains(); !ok {
-		return &ValidationError{Name: "domains", err: errors.New(`ent: missing required field "domains"`)}
+	if _, ok := sac.mutation.Protocol(); !ok {
+		return &ValidationError{Name: "protocol", err: errors.New(`ent: missing required field "protocol"`)}
 	}
 	if _, ok := sac.mutation.ServiceName(); !ok {
 		return &ValidationError{Name: "service_name", err: errors.New(`ent: missing required field "service_name"`)}
+	}
+	if _, ok := sac.mutation.Domains(); !ok {
+		return &ValidationError{Name: "domains", err: errors.New(`ent: missing required field "domains"`)}
 	}
 	if _, ok := sac.mutation.Method(); !ok {
 		return &ValidationError{Name: "method", err: errors.New(`ent: missing required field "method"`)}
@@ -258,13 +267,13 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := sac.mutation.Domains(); ok {
+	if value, ok := sac.mutation.Protocol(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: serviceapi.FieldDomains,
+			Column: serviceapi.FieldProtocol,
 		})
-		_node.Domains = value
+		_node.Protocol = value
 	}
 	if value, ok := sac.mutation.ServiceName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -273,6 +282,14 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 			Column: serviceapi.FieldServiceName,
 		})
 		_node.ServiceName = value
+	}
+	if value, ok := sac.mutation.Domains(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: serviceapi.FieldDomains,
+		})
+		_node.Domains = value
 	}
 	if value, ok := sac.mutation.Method(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -337,7 +354,7 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.ServiceAPI.Create().
-//		SetDomains(v).
+//		SetProtocol(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -346,7 +363,7 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ServiceAPIUpsert) {
-//			SetDomains(v+v).
+//			SetProtocol(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -384,15 +401,15 @@ type (
 	}
 )
 
-// SetDomains sets the "domains" field.
-func (u *ServiceAPIUpsert) SetDomains(v []string) *ServiceAPIUpsert {
-	u.Set(serviceapi.FieldDomains, v)
+// SetProtocol sets the "protocol" field.
+func (u *ServiceAPIUpsert) SetProtocol(v string) *ServiceAPIUpsert {
+	u.Set(serviceapi.FieldProtocol, v)
 	return u
 }
 
-// UpdateDomains sets the "domains" field to the value that was provided on create.
-func (u *ServiceAPIUpsert) UpdateDomains() *ServiceAPIUpsert {
-	u.SetExcluded(serviceapi.FieldDomains)
+// UpdateProtocol sets the "protocol" field to the value that was provided on create.
+func (u *ServiceAPIUpsert) UpdateProtocol() *ServiceAPIUpsert {
+	u.SetExcluded(serviceapi.FieldProtocol)
 	return u
 }
 
@@ -405,6 +422,18 @@ func (u *ServiceAPIUpsert) SetServiceName(v string) *ServiceAPIUpsert {
 // UpdateServiceName sets the "service_name" field to the value that was provided on create.
 func (u *ServiceAPIUpsert) UpdateServiceName() *ServiceAPIUpsert {
 	u.SetExcluded(serviceapi.FieldServiceName)
+	return u
+}
+
+// SetDomains sets the "domains" field.
+func (u *ServiceAPIUpsert) SetDomains(v []string) *ServiceAPIUpsert {
+	u.Set(serviceapi.FieldDomains, v)
+	return u
+}
+
+// UpdateDomains sets the "domains" field to the value that was provided on create.
+func (u *ServiceAPIUpsert) UpdateDomains() *ServiceAPIUpsert {
+	u.SetExcluded(serviceapi.FieldDomains)
 	return u
 }
 
@@ -542,17 +571,17 @@ func (u *ServiceAPIUpsertOne) Update(set func(*ServiceAPIUpsert)) *ServiceAPIUps
 	return u
 }
 
-// SetDomains sets the "domains" field.
-func (u *ServiceAPIUpsertOne) SetDomains(v []string) *ServiceAPIUpsertOne {
+// SetProtocol sets the "protocol" field.
+func (u *ServiceAPIUpsertOne) SetProtocol(v string) *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.SetDomains(v)
+		s.SetProtocol(v)
 	})
 }
 
-// UpdateDomains sets the "domains" field to the value that was provided on create.
-func (u *ServiceAPIUpsertOne) UpdateDomains() *ServiceAPIUpsertOne {
+// UpdateProtocol sets the "protocol" field to the value that was provided on create.
+func (u *ServiceAPIUpsertOne) UpdateProtocol() *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.UpdateDomains()
+		s.UpdateProtocol()
 	})
 }
 
@@ -567,6 +596,20 @@ func (u *ServiceAPIUpsertOne) SetServiceName(v string) *ServiceAPIUpsertOne {
 func (u *ServiceAPIUpsertOne) UpdateServiceName() *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
 		s.UpdateServiceName()
+	})
+}
+
+// SetDomains sets the "domains" field.
+func (u *ServiceAPIUpsertOne) SetDomains(v []string) *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.SetDomains(v)
+	})
+}
+
+// UpdateDomains sets the "domains" field to the value that was provided on create.
+func (u *ServiceAPIUpsertOne) UpdateDomains() *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.UpdateDomains()
 	})
 }
 
@@ -800,7 +843,7 @@ func (sacb *ServiceAPICreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ServiceAPIUpsert) {
-//			SetDomains(v+v).
+//			SetProtocol(v+v).
 //		}).
 //		Exec(ctx)
 //
@@ -884,17 +927,17 @@ func (u *ServiceAPIUpsertBulk) Update(set func(*ServiceAPIUpsert)) *ServiceAPIUp
 	return u
 }
 
-// SetDomains sets the "domains" field.
-func (u *ServiceAPIUpsertBulk) SetDomains(v []string) *ServiceAPIUpsertBulk {
+// SetProtocol sets the "protocol" field.
+func (u *ServiceAPIUpsertBulk) SetProtocol(v string) *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.SetDomains(v)
+		s.SetProtocol(v)
 	})
 }
 
-// UpdateDomains sets the "domains" field to the value that was provided on create.
-func (u *ServiceAPIUpsertBulk) UpdateDomains() *ServiceAPIUpsertBulk {
+// UpdateProtocol sets the "protocol" field to the value that was provided on create.
+func (u *ServiceAPIUpsertBulk) UpdateProtocol() *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
-		s.UpdateDomains()
+		s.UpdateProtocol()
 	})
 }
 
@@ -909,6 +952,20 @@ func (u *ServiceAPIUpsertBulk) SetServiceName(v string) *ServiceAPIUpsertBulk {
 func (u *ServiceAPIUpsertBulk) UpdateServiceName() *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
 		s.UpdateServiceName()
+	})
+}
+
+// SetDomains sets the "domains" field.
+func (u *ServiceAPIUpsertBulk) SetDomains(v []string) *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.SetDomains(v)
+	})
+}
+
+// UpdateDomains sets the "domains" field to the value that was provided on create.
+func (u *ServiceAPIUpsertBulk) UpdateDomains() *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.UpdateDomains()
 	})
 }
 

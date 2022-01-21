@@ -254,12 +254,12 @@ func (saq *ServiceAPIQuery) Clone() *ServiceAPIQuery {
 // Example:
 //
 //	var v []struct {
-//		Domains []string `json:"domains,omitempty"`
+//		Protocol string `json:"protocol,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ServiceAPI.Query().
-//		GroupBy(serviceapi.FieldDomains).
+//		GroupBy(serviceapi.FieldProtocol).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -281,11 +281,11 @@ func (saq *ServiceAPIQuery) GroupBy(field string, fields ...string) *ServiceAPIG
 // Example:
 //
 //	var v []struct {
-//		Domains []string `json:"domains,omitempty"`
+//		Protocol string `json:"protocol,omitempty"`
 //	}
 //
 //	client.ServiceAPI.Query().
-//		Select(serviceapi.FieldDomains).
+//		Select(serviceapi.FieldProtocol).
 //		Scan(ctx, &v)
 //
 func (saq *ServiceAPIQuery) Select(fields ...string) *ServiceAPISelect {

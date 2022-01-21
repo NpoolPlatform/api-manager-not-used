@@ -11,8 +11,9 @@ var (
 	// ServiceApIsColumns holds the columns for the "service_ap_is" table.
 	ServiceApIsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "domains", Type: field.TypeJSON},
+		{Name: "protocol", Type: field.TypeString},
 		{Name: "service_name", Type: field.TypeString},
+		{Name: "domains", Type: field.TypeJSON},
 		{Name: "method", Type: field.TypeString},
 		{Name: "path", Type: field.TypeString},
 		{Name: "exported", Type: field.TypeBool},
@@ -30,7 +31,7 @@ var (
 			{
 				Name:    "serviceapi_service_name_method_path",
 				Unique:  true,
-				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[3], ServiceApIsColumns[4]},
+				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[4], ServiceApIsColumns[5]},
 			},
 		},
 	}

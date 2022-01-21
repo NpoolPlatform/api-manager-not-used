@@ -33,8 +33,9 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 		err := tx.
 			ServiceAPI.
 			Create().
-			SetDomains([]string{}).
+			SetServiceName(in.GetInfo().GetProtocol()).
 			SetServiceName(in.GetInfo().GetServiceName()).
+			SetDomains([]string{}).
 			SetMethod(path.GetMethod()).
 			SetPath(path.GetPath()).
 			SetExported(path.GetExported()).
