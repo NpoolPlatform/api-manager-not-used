@@ -134,6 +134,9 @@ func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisRespo
 			Path:        info.Path,
 			Exported:    info.Exported,
 			PathPrefix:  info.PathPrefix,
+			Protocol:    info.Protocol,
+			CreateAt:    info.CreateAt,
+			UpdateAt:    info.UpdateAt,
 		})
 	}
 
