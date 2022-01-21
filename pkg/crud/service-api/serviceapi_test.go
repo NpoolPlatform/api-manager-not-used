@@ -30,6 +30,7 @@ func TestCRUD(t *testing.T) {
 	apis := npool.ServiceApis{
 		ServiceName: fmt.Sprintf("test-app.npool.top-%v", uuid.New()),
 		PathPrefix:  "/api/test-app",
+		Protocol:    "http",
 		Paths: []*npool.Path{
 			{Method: "GET", Path: "/v1/get/test", Exported: false},
 			{Method: "POST", Path: "/v1/get/test1", Exported: false},

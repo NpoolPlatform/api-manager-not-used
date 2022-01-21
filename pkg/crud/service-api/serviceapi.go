@@ -33,7 +33,7 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 		err := tx.
 			ServiceAPI.
 			Create().
-			SetServiceName(in.GetInfo().GetProtocol()).
+			SetProtocol(in.GetInfo().GetProtocol()).
 			SetServiceName(in.GetInfo().GetServiceName()).
 			SetDomains([]string{}).
 			SetMethod(path.GetMethod()).
