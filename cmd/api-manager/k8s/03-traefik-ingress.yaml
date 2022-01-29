@@ -1,17 +1,19 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: api-manager-treafik-appid-userid-ingress
+  name: api-manager-treafik-app-user-ingress
   namespace: kube-system
   annotations:
-    k8s.kuboard.cn/displayName: api-manager-traefik-appid-userid
-    k8s.kuboard.cn/workload: api-manager-traefik-appid-userid
+    k8s.kuboard.cn/displayName: api-manager-traefik-app-user
+    k8s.kuboard.cn/workload: api-manager-traefik-app-user
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares: kube-system-strip-api-manager-prefix@kubernetescrd,
+                                                      kube-system-common-headers@kubernetescrd,
                                                       kube-system-headers-appid-to-body@kubernetescrd,
                                                       kube-system-headers-userid-to-body@kubernetescrd,
-                                                      kube-system-common-headers@kubernetescrd
+                                                      kube-system-headers-app-login-token-to-body@kubernetescrd,
+                                                      kube-system-app-user-role-rbac-auth@kubernetescrd
 
 spec:
   rules:
@@ -22,13 +24,9 @@ spec:
             backend:
               serviceName: api-manager
               servicePort: 50220
+    - host: api.procyon.vip
+      http: *http_rules
     - host: api.xpool.top
-      http: *http_rules
-    - host: www.npool.top
-      http: *http_rules
-    - host: www.xpool.top
-      http: *http_rules
-    - host: dashboard.xpool.top
       http: *http_rules
 
 ---
@@ -36,16 +34,19 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: api-manager-treafik-ingress
+  name: api-manager-treafik-app-ingress
   namespace: kube-system
   annotations:
-    k8s.kuboard.cn/displayName: api-manager-traefik
-    k8s.kuboard.cn/workload: api-manager-traefik
+    k8s.kuboard.cn/displayName: api-manager-traefik-app
+    k8s.kuboard.cn/workload: api-manager-traefik-app
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares: kube-system-strip-api-manager-prefix@kubernetescrd,
+                                                      kube-system-common-headers@kubernetescrd,
                                                       kube-system-headers-appid-to-body@kubernetescrd,
-                                                      kube-system-common-headers@kubernetescrd
+                                                      kube-system-headers-userid-to-body@kubernetescrd,
+                                                      kube-system-headers-app-login-token-to-body@kubernetescrd,
+                                                      kube-system-app-rbac-auth@kubernetescrd
 
 spec:
   rules:
@@ -56,23 +57,7 @@ spec:
             backend:
               serviceName: api-manager
               servicePort: 50220
+    - host: api.procyon.vip
+      http: *http_rules
     - host: api.xpool.top
       http: *http_rules
-    - host: www.npool.top
-      http: *http_rules
-    - host: www.xpool.top
-      http: *http_rules
-    - host: dashboard.xpool.top
-      http: *http_rules
-
----
-
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-api-manager-prefix
-  namespace: kube-system
-spec:
-  stripPrefix:
-    prefixes:
-      - /api/api-manager
