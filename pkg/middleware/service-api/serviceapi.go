@@ -118,7 +118,8 @@ func updater() { //nolint
 		}
 
 		for _, info := range resp.Infos {
-			if !strings.Contains(serviceKey, info.ServiceName) || !strings.Contains(info.Path, path) {
+			serviceNameKey := strings.Split(info.ServiceName, ".")[0]
+			if !strings.Contains(serviceKey, serviceNameKey) || !strings.Contains(info.Path, path) {
 				continue
 			}
 
