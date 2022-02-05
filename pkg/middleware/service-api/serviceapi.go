@@ -118,7 +118,7 @@ func updater() { //nolint
 		}
 
 		for _, info := range resp.Infos {
-			if !strings.Contains(info.ServiceName, serviceKey) || !strings.Contains(info.Path, path) {
+			if !strings.Contains(serviceKey, info.ServiceName) || !strings.Contains(info.Path, path) {
 				continue
 			}
 
