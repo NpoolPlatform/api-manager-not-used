@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/NpoolPlatform/api-manager/pkg/db/ent/serviceapi"
+
 	"github.com/NpoolPlatform/api-manager/pkg/db"
 	npool "github.com/NpoolPlatform/message/npool/apimgr"
 
@@ -40,6 +42,7 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 			SetPath(path.GetPath()).
 			SetExported(path.GetExported()).
 			SetPathPrefix(in.GetInfo().GetPathPrefix()).
+			SetMethodName(path.MethodName).
 			OnConflict().
 			UpdateNewValues().
 			Exec(ctx)
@@ -141,6 +144,48 @@ func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisRespo
 	}
 
 	return &npool.GetApisResponse{
+		Infos: apis,
+	}, nil
+}
+
+func GetApisByServiceNameMethodName(ctx context.Context, in *npool.GetApisByServiceNameMethodNameRequest) (*npool.GetApisByServiceNameMethodNameResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, grpcTimeout)
+	defer cancel()
+
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	infos, err := cli.
+		ServiceAPI.
+		Query().
+		Where(
+			serviceapi.ServiceName(in.ServiceName),
+			serviceapi.MethodNameIn(in.MethodName...),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query service api: %v", err)
+	}
+
+	apis := []*npool.ServicePath{}
+	for _, info := range infos {
+		apis = append(apis, &npool.ServicePath{
+			ID:          info.ID.String(),
+			Domains:     info.Domains,
+			ServiceName: info.ServiceName,
+			Method:      info.Method,
+			Path:        info.Path,
+			Exported:    info.Exported,
+			PathPrefix:  info.PathPrefix,
+			Protocol:    info.Protocol,
+			CreateAt:    info.CreateAt,
+			UpdateAt:    info.UpdateAt,
+			MethodName:  info.MethodName,
+		})
+	}
+	return &npool.GetApisByServiceNameMethodNameResponse{
 		Infos: apis,
 	}, nil
 }

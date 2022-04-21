@@ -18,6 +18,7 @@ var (
 		{Name: "path", Type: field.TypeString},
 		{Name: "exported", Type: field.TypeBool},
 		{Name: "path_prefix", Type: field.TypeString},
+		{Name: "method_name", Type: field.TypeString},
 		{Name: "create_at", Type: field.TypeUint32},
 		{Name: "update_at", Type: field.TypeUint32},
 		{Name: "delete_at", Type: field.TypeUint32},

@@ -31,6 +31,8 @@ type ServiceAPI struct {
 	Exported bool `json:"exported,omitempty"`
 	// PathPrefix holds the value of the "path_prefix" field.
 	PathPrefix string `json:"path_prefix,omitempty"`
+	// MethodName holds the value of the "method_name" field.
+	MethodName string `json:"method_name,omitempty"`
 	// CreateAt holds the value of the "create_at" field.
 	CreateAt uint32 `json:"create_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
@@ -50,7 +52,7 @@ func (*ServiceAPI) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case serviceapi.FieldCreateAt, serviceapi.FieldUpdateAt, serviceapi.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case serviceapi.FieldProtocol, serviceapi.FieldServiceName, serviceapi.FieldMethod, serviceapi.FieldPath, serviceapi.FieldPathPrefix:
+		case serviceapi.FieldProtocol, serviceapi.FieldServiceName, serviceapi.FieldMethod, serviceapi.FieldPath, serviceapi.FieldPathPrefix, serviceapi.FieldMethodName:
 			values[i] = new(sql.NullString)
 		case serviceapi.FieldID:
 			values[i] = new(uuid.UUID)
@@ -119,6 +121,12 @@ func (sa *ServiceAPI) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				sa.PathPrefix = value.String
 			}
+		case serviceapi.FieldMethodName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field method_name", values[i])
+			} else if value.Valid {
+				sa.MethodName = value.String
+			}
 		case serviceapi.FieldCreateAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field create_at", values[i])
@@ -179,6 +187,8 @@ func (sa *ServiceAPI) String() string {
 	builder.WriteString(fmt.Sprintf("%v", sa.Exported))
 	builder.WriteString(", path_prefix=")
 	builder.WriteString(sa.PathPrefix)
+	builder.WriteString(", method_name=")
+	builder.WriteString(sa.MethodName)
 	builder.WriteString(", create_at=")
 	builder.WriteString(fmt.Sprintf("%v", sa.CreateAt))
 	builder.WriteString(", update_at=")

@@ -65,6 +65,12 @@ func (sac *ServiceAPICreate) SetPathPrefix(s string) *ServiceAPICreate {
 	return sac
 }
 
+// SetMethodName sets the "method_name" field.
+func (sac *ServiceAPICreate) SetMethodName(s string) *ServiceAPICreate {
+	sac.mutation.SetMethodName(s)
+	return sac
+}
+
 // SetCreateAt sets the "create_at" field.
 func (sac *ServiceAPICreate) SetCreateAt(u uint32) *ServiceAPICreate {
 	sac.mutation.SetCreateAt(u)
@@ -110,6 +116,14 @@ func (sac *ServiceAPICreate) SetNillableDeleteAt(u *uint32) *ServiceAPICreate {
 // SetID sets the "id" field.
 func (sac *ServiceAPICreate) SetID(u uuid.UUID) *ServiceAPICreate {
 	sac.mutation.SetID(u)
+	return sac
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (sac *ServiceAPICreate) SetNillableID(u *uuid.UUID) *ServiceAPICreate {
+	if u != nil {
+		sac.SetID(*u)
+	}
 	return sac
 }
 
@@ -205,34 +219,37 @@ func (sac *ServiceAPICreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (sac *ServiceAPICreate) check() error {
 	if _, ok := sac.mutation.Protocol(); !ok {
-		return &ValidationError{Name: "protocol", err: errors.New(`ent: missing required field "protocol"`)}
+		return &ValidationError{Name: "protocol", err: errors.New(`ent: missing required field "ServiceAPI.protocol"`)}
 	}
 	if _, ok := sac.mutation.ServiceName(); !ok {
-		return &ValidationError{Name: "service_name", err: errors.New(`ent: missing required field "service_name"`)}
+		return &ValidationError{Name: "service_name", err: errors.New(`ent: missing required field "ServiceAPI.service_name"`)}
 	}
 	if _, ok := sac.mutation.Domains(); !ok {
-		return &ValidationError{Name: "domains", err: errors.New(`ent: missing required field "domains"`)}
+		return &ValidationError{Name: "domains", err: errors.New(`ent: missing required field "ServiceAPI.domains"`)}
 	}
 	if _, ok := sac.mutation.Method(); !ok {
-		return &ValidationError{Name: "method", err: errors.New(`ent: missing required field "method"`)}
+		return &ValidationError{Name: "method", err: errors.New(`ent: missing required field "ServiceAPI.method"`)}
 	}
 	if _, ok := sac.mutation.Path(); !ok {
-		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "path"`)}
+		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "ServiceAPI.path"`)}
 	}
 	if _, ok := sac.mutation.Exported(); !ok {
-		return &ValidationError{Name: "exported", err: errors.New(`ent: missing required field "exported"`)}
+		return &ValidationError{Name: "exported", err: errors.New(`ent: missing required field "ServiceAPI.exported"`)}
 	}
 	if _, ok := sac.mutation.PathPrefix(); !ok {
-		return &ValidationError{Name: "path_prefix", err: errors.New(`ent: missing required field "path_prefix"`)}
+		return &ValidationError{Name: "path_prefix", err: errors.New(`ent: missing required field "ServiceAPI.path_prefix"`)}
+	}
+	if _, ok := sac.mutation.MethodName(); !ok {
+		return &ValidationError{Name: "method_name", err: errors.New(`ent: missing required field "ServiceAPI.method_name"`)}
 	}
 	if _, ok := sac.mutation.CreateAt(); !ok {
-		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "create_at"`)}
+		return &ValidationError{Name: "create_at", err: errors.New(`ent: missing required field "ServiceAPI.create_at"`)}
 	}
 	if _, ok := sac.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "update_at"`)}
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "ServiceAPI.update_at"`)}
 	}
 	if _, ok := sac.mutation.DeleteAt(); !ok {
-		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "delete_at"`)}
+		return &ValidationError{Name: "delete_at", err: errors.New(`ent: missing required field "ServiceAPI.delete_at"`)}
 	}
 	return nil
 }
@@ -246,7 +263,11 @@ func (sac *ServiceAPICreate) sqlSave(ctx context.Context) (*ServiceAPI, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(uuid.UUID)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
 	}
 	return _node, nil
 }
@@ -265,7 +286,7 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = sac.conflict
 	if id, ok := sac.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := sac.mutation.Protocol(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -322,6 +343,14 @@ func (sac *ServiceAPICreate) createSpec() (*ServiceAPI, *sqlgraph.CreateSpec) {
 			Column: serviceapi.FieldPathPrefix,
 		})
 		_node.PathPrefix = value
+	}
+	if value, ok := sac.mutation.MethodName(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: serviceapi.FieldMethodName,
+		})
+		_node.MethodName = value
 	}
 	if value, ok := sac.mutation.CreateAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -485,6 +514,18 @@ func (u *ServiceAPIUpsert) UpdatePathPrefix() *ServiceAPIUpsert {
 	return u
 }
 
+// SetMethodName sets the "method_name" field.
+func (u *ServiceAPIUpsert) SetMethodName(v string) *ServiceAPIUpsert {
+	u.Set(serviceapi.FieldMethodName, v)
+	return u
+}
+
+// UpdateMethodName sets the "method_name" field to the value that was provided on create.
+func (u *ServiceAPIUpsert) UpdateMethodName() *ServiceAPIUpsert {
+	u.SetExcluded(serviceapi.FieldMethodName)
+	return u
+}
+
 // SetCreateAt sets the "create_at" field.
 func (u *ServiceAPIUpsert) SetCreateAt(v uint32) *ServiceAPIUpsert {
 	u.Set(serviceapi.FieldCreateAt, v)
@@ -494,6 +535,12 @@ func (u *ServiceAPIUpsert) SetCreateAt(v uint32) *ServiceAPIUpsert {
 // UpdateCreateAt sets the "create_at" field to the value that was provided on create.
 func (u *ServiceAPIUpsert) UpdateCreateAt() *ServiceAPIUpsert {
 	u.SetExcluded(serviceapi.FieldCreateAt)
+	return u
+}
+
+// AddCreateAt adds v to the "create_at" field.
+func (u *ServiceAPIUpsert) AddCreateAt(v uint32) *ServiceAPIUpsert {
+	u.Add(serviceapi.FieldCreateAt, v)
 	return u
 }
 
@@ -509,6 +556,12 @@ func (u *ServiceAPIUpsert) UpdateUpdateAt() *ServiceAPIUpsert {
 	return u
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *ServiceAPIUpsert) AddUpdateAt(v uint32) *ServiceAPIUpsert {
+	u.Add(serviceapi.FieldUpdateAt, v)
+	return u
+}
+
 // SetDeleteAt sets the "delete_at" field.
 func (u *ServiceAPIUpsert) SetDeleteAt(v uint32) *ServiceAPIUpsert {
 	u.Set(serviceapi.FieldDeleteAt, v)
@@ -521,7 +574,13 @@ func (u *ServiceAPIUpsert) UpdateDeleteAt() *ServiceAPIUpsert {
 	return u
 }
 
-// UpdateNewValues updates the fields using the new values that were set on create except the ID field.
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *ServiceAPIUpsert) AddDeleteAt(v uint32) *ServiceAPIUpsert {
+	u.Add(serviceapi.FieldDeleteAt, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.ServiceAPI.Create().
@@ -669,10 +728,31 @@ func (u *ServiceAPIUpsertOne) UpdatePathPrefix() *ServiceAPIUpsertOne {
 	})
 }
 
+// SetMethodName sets the "method_name" field.
+func (u *ServiceAPIUpsertOne) SetMethodName(v string) *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.SetMethodName(v)
+	})
+}
+
+// UpdateMethodName sets the "method_name" field to the value that was provided on create.
+func (u *ServiceAPIUpsertOne) UpdateMethodName() *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.UpdateMethodName()
+	})
+}
+
 // SetCreateAt sets the "create_at" field.
 func (u *ServiceAPIUpsertOne) SetCreateAt(v uint32) *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
 		s.SetCreateAt(v)
+	})
+}
+
+// AddCreateAt adds v to the "create_at" field.
+func (u *ServiceAPIUpsertOne) AddCreateAt(v uint32) *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.AddCreateAt(v)
 	})
 }
 
@@ -690,6 +770,13 @@ func (u *ServiceAPIUpsertOne) SetUpdateAt(v uint32) *ServiceAPIUpsertOne {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *ServiceAPIUpsertOne) AddUpdateAt(v uint32) *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *ServiceAPIUpsertOne) UpdateUpdateAt() *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
@@ -701,6 +788,13 @@ func (u *ServiceAPIUpsertOne) UpdateUpdateAt() *ServiceAPIUpsertOne {
 func (u *ServiceAPIUpsertOne) SetDeleteAt(v uint32) *ServiceAPIUpsertOne {
 	return u.Update(func(s *ServiceAPIUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *ServiceAPIUpsertOne) AddDeleteAt(v uint32) *ServiceAPIUpsertOne {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
@@ -874,7 +968,7 @@ type ServiceAPIUpsertBulk struct {
 	create *ServiceAPICreateBulk
 }
 
-// UpdateNewValues updates the fields using the new values that
+// UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
 //	client.ServiceAPI.Create().
@@ -1025,10 +1119,31 @@ func (u *ServiceAPIUpsertBulk) UpdatePathPrefix() *ServiceAPIUpsertBulk {
 	})
 }
 
+// SetMethodName sets the "method_name" field.
+func (u *ServiceAPIUpsertBulk) SetMethodName(v string) *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.SetMethodName(v)
+	})
+}
+
+// UpdateMethodName sets the "method_name" field to the value that was provided on create.
+func (u *ServiceAPIUpsertBulk) UpdateMethodName() *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.UpdateMethodName()
+	})
+}
+
 // SetCreateAt sets the "create_at" field.
 func (u *ServiceAPIUpsertBulk) SetCreateAt(v uint32) *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
 		s.SetCreateAt(v)
+	})
+}
+
+// AddCreateAt adds v to the "create_at" field.
+func (u *ServiceAPIUpsertBulk) AddCreateAt(v uint32) *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.AddCreateAt(v)
 	})
 }
 
@@ -1046,6 +1161,13 @@ func (u *ServiceAPIUpsertBulk) SetUpdateAt(v uint32) *ServiceAPIUpsertBulk {
 	})
 }
 
+// AddUpdateAt adds v to the "update_at" field.
+func (u *ServiceAPIUpsertBulk) AddUpdateAt(v uint32) *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.AddUpdateAt(v)
+	})
+}
+
 // UpdateUpdateAt sets the "update_at" field to the value that was provided on create.
 func (u *ServiceAPIUpsertBulk) UpdateUpdateAt() *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
@@ -1057,6 +1179,13 @@ func (u *ServiceAPIUpsertBulk) UpdateUpdateAt() *ServiceAPIUpsertBulk {
 func (u *ServiceAPIUpsertBulk) SetDeleteAt(v uint32) *ServiceAPIUpsertBulk {
 	return u.Update(func(s *ServiceAPIUpsert) {
 		s.SetDeleteAt(v)
+	})
+}
+
+// AddDeleteAt adds v to the "delete_at" field.
+func (u *ServiceAPIUpsertBulk) AddDeleteAt(v uint32) *ServiceAPIUpsertBulk {
+	return u.Update(func(s *ServiceAPIUpsert) {
+		s.AddDeleteAt(v)
 	})
 }
 
