@@ -59,8 +59,8 @@ github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592 h1:fsYAxdFmjSWMW+uoSmXC7YcG9QGdqiC/P1cnvCt1XTo=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592/go.mod h1:JqrktA7gNQe/Uprnr6DCs5UCFpheCZ30lDd0OkyRtC4=
-github.com/NpoolPlatform/message v0.0.0-20220421113823-47246ba5218b h1:bxXkK5zhY+pDmK5qD5XaopOye7qo+FkNOb+MGEIZHek=
-github.com/NpoolPlatform/message v0.0.0-20220421113823-47246ba5218b/go.mod h1:Yd0rqn057j1pXgPH/xwDCWHB1b1sIPzzSvGHeBMjA9I=
+github.com/NpoolPlatform/message v0.0.0-20220422054207-7008de90f113 h1:xEP08jflb4NvTlrYMkSFTKVDuAnBpIK/hHfJduZLsAA=
+github.com/NpoolPlatform/message v0.0.0-20220422054207-7008de90f113/go.mod h1:Yd0rqn057j1pXgPH/xwDCWHB1b1sIPzzSvGHeBMjA9I=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=

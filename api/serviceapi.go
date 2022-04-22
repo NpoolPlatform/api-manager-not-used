@@ -31,11 +31,11 @@ func (s *Server) GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.
 	return resp, nil
 }
 
-func (s *Server) GetApisByServiceNameMethodName(ctx context.Context, in *npool.GetApisByServiceNameMethodNameRequest) (*npool.GetApisByServiceNameMethodNameResponse, error) {
+func (s *Server) GetApisByServiceMethod(ctx context.Context, in *npool.GetApisByServiceMethodRequest) (*npool.GetApisByServiceMethodResponse, error) {
 	resp, err := crud.GetApisByServiceNameMethodName(ctx, in)
 	if err != nil {
 		logger.Sugar().Errorw("get apis error: %v", err)
-		return &npool.GetApisByServiceNameMethodNameResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.GetApisByServiceMethodResponse{}, status.Error(codes.Internal, err.Error())
 	}
 	return resp, nil
 }
