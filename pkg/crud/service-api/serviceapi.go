@@ -148,7 +148,7 @@ func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisRespo
 	}, nil
 }
 
-func GetApisByServiceNameMethodName(ctx context.Context, in *npool.GetApisByServiceMethodRequest) (*npool.GetApisByServiceMethodResponse, error) {
+func GetApisByServiceMethod(ctx context.Context, in *npool.GetApisByServiceMethodRequest) (*npool.GetApisByServiceMethodResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, grpcTimeout)
 	defer cancel()
 
