@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -69,12 +68,6 @@ func (sau *ServiceAPIUpdate) SetPathPrefix(s string) *ServiceAPIUpdate {
 	return sau
 }
 
-// SetMethodName sets the "method_name" field.
-func (sau *ServiceAPIUpdate) SetMethodName(s string) *ServiceAPIUpdate {
-	sau.mutation.SetMethodName(s)
-	return sau
-}
-
 // SetCreateAt sets the "create_at" field.
 func (sau *ServiceAPIUpdate) SetCreateAt(u uint32) *ServiceAPIUpdate {
 	sau.mutation.ResetCreateAt()
@@ -91,7 +84,7 @@ func (sau *ServiceAPIUpdate) SetNillableCreateAt(u *uint32) *ServiceAPIUpdate {
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (sau *ServiceAPIUpdate) AddCreateAt(u int32) *ServiceAPIUpdate {
+func (sau *ServiceAPIUpdate) AddCreateAt(u uint32) *ServiceAPIUpdate {
 	sau.mutation.AddCreateAt(u)
 	return sau
 }
@@ -104,7 +97,7 @@ func (sau *ServiceAPIUpdate) SetUpdateAt(u uint32) *ServiceAPIUpdate {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (sau *ServiceAPIUpdate) AddUpdateAt(u int32) *ServiceAPIUpdate {
+func (sau *ServiceAPIUpdate) AddUpdateAt(u uint32) *ServiceAPIUpdate {
 	sau.mutation.AddUpdateAt(u)
 	return sau
 }
@@ -125,7 +118,7 @@ func (sau *ServiceAPIUpdate) SetNillableDeleteAt(u *uint32) *ServiceAPIUpdate {
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (sau *ServiceAPIUpdate) AddDeleteAt(u int32) *ServiceAPIUpdate {
+func (sau *ServiceAPIUpdate) AddDeleteAt(u uint32) *ServiceAPIUpdate {
 	sau.mutation.AddDeleteAt(u)
 	return sau
 }
@@ -265,13 +258,6 @@ func (sau *ServiceAPIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: serviceapi.FieldPathPrefix,
 		})
 	}
-	if value, ok := sau.mutation.MethodName(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: serviceapi.FieldMethodName,
-		})
-	}
 	if value, ok := sau.mutation.CreateAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -375,12 +361,6 @@ func (sauo *ServiceAPIUpdateOne) SetPathPrefix(s string) *ServiceAPIUpdateOne {
 	return sauo
 }
 
-// SetMethodName sets the "method_name" field.
-func (sauo *ServiceAPIUpdateOne) SetMethodName(s string) *ServiceAPIUpdateOne {
-	sauo.mutation.SetMethodName(s)
-	return sauo
-}
-
 // SetCreateAt sets the "create_at" field.
 func (sauo *ServiceAPIUpdateOne) SetCreateAt(u uint32) *ServiceAPIUpdateOne {
 	sauo.mutation.ResetCreateAt()
@@ -397,7 +377,7 @@ func (sauo *ServiceAPIUpdateOne) SetNillableCreateAt(u *uint32) *ServiceAPIUpdat
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (sauo *ServiceAPIUpdateOne) AddCreateAt(u int32) *ServiceAPIUpdateOne {
+func (sauo *ServiceAPIUpdateOne) AddCreateAt(u uint32) *ServiceAPIUpdateOne {
 	sauo.mutation.AddCreateAt(u)
 	return sauo
 }
@@ -410,7 +390,7 @@ func (sauo *ServiceAPIUpdateOne) SetUpdateAt(u uint32) *ServiceAPIUpdateOne {
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (sauo *ServiceAPIUpdateOne) AddUpdateAt(u int32) *ServiceAPIUpdateOne {
+func (sauo *ServiceAPIUpdateOne) AddUpdateAt(u uint32) *ServiceAPIUpdateOne {
 	sauo.mutation.AddUpdateAt(u)
 	return sauo
 }
@@ -431,7 +411,7 @@ func (sauo *ServiceAPIUpdateOne) SetNillableDeleteAt(u *uint32) *ServiceAPIUpdat
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (sauo *ServiceAPIUpdateOne) AddDeleteAt(u int32) *ServiceAPIUpdateOne {
+func (sauo *ServiceAPIUpdateOne) AddDeleteAt(u uint32) *ServiceAPIUpdateOne {
 	sauo.mutation.AddDeleteAt(u)
 	return sauo
 }
@@ -524,7 +504,7 @@ func (sauo *ServiceAPIUpdateOne) sqlSave(ctx context.Context) (_node *ServiceAPI
 	}
 	id, ok := sauo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ServiceAPI.id" for update`)}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing ServiceAPI.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if fields := sauo.fields; len(fields) > 0 {
@@ -593,13 +573,6 @@ func (sauo *ServiceAPIUpdateOne) sqlSave(ctx context.Context) (_node *ServiceAPI
 			Type:   field.TypeString,
 			Value:  value,
 			Column: serviceapi.FieldPathPrefix,
-		})
-	}
-	if value, ok := sauo.mutation.MethodName(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: serviceapi.FieldMethodName,
 		})
 	}
 	if value, ok := sauo.mutation.CreateAt(); ok {

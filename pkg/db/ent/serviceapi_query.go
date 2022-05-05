@@ -107,7 +107,7 @@ func (saq *ServiceAPIQuery) FirstIDX(ctx context.Context) uuid.UUID {
 }
 
 // Only returns a single ServiceAPI entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one ServiceAPI entity is found.
+// Returns a *NotSingularError when exactly one ServiceAPI entity is not found.
 // Returns a *NotFoundError when no ServiceAPI entities are found.
 func (saq *ServiceAPIQuery) Only(ctx context.Context) (*ServiceAPI, error) {
 	nodes, err := saq.Limit(2).All(ctx)
@@ -134,7 +134,7 @@ func (saq *ServiceAPIQuery) OnlyX(ctx context.Context) *ServiceAPI {
 }
 
 // OnlyID is like Only, but returns the only ServiceAPI ID in the query.
-// Returns a *NotSingularError when more than one ServiceAPI ID is found.
+// Returns a *NotSingularError when exactly one ServiceAPI ID is not found.
 // Returns a *NotFoundError when no entities are found.
 func (saq *ServiceAPIQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
@@ -243,9 +243,8 @@ func (saq *ServiceAPIQuery) Clone() *ServiceAPIQuery {
 		order:      append([]OrderFunc{}, saq.order...),
 		predicates: append([]predicate.ServiceAPI{}, saq.predicates...),
 		// clone intermediate query.
-		sql:    saq.sql.Clone(),
-		path:   saq.path,
-		unique: saq.unique,
+		sql:  saq.sql.Clone(),
+		path: saq.path,
 	}
 }
 
@@ -338,10 +337,6 @@ func (saq *ServiceAPIQuery) sqlAll(ctx context.Context) ([]*ServiceAPI, error) {
 
 func (saq *ServiceAPIQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := saq.querySpec()
-	_spec.Node.Columns = saq.fields
-	if len(saq.fields) > 0 {
-		_spec.Unique = saq.unique != nil && *saq.unique
-	}
 	return sqlgraph.CountNodes(ctx, saq.driver, _spec)
 }
 
@@ -412,9 +407,6 @@ func (saq *ServiceAPIQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if saq.sql != nil {
 		selector = saq.sql
 		selector.Select(selector.Columns(columns...)...)
-	}
-	if saq.unique != nil && *saq.unique {
-		selector.Distinct()
 	}
 	for _, p := range saq.predicates {
 		p(selector)
@@ -694,7 +686,9 @@ func (sagb *ServiceAPIGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range sagb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		columns = append(columns, aggregation...)
+		for _, c := range aggregation {
+			columns = append(columns, c)
+		}
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(sagb.fields...)...)

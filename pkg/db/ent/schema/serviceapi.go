@@ -28,7 +28,6 @@ func (ServiceAPI) Fields() []ent.Field {
 		field.String("path"),
 		field.Bool("exported"),
 		field.String("path_prefix"),
-		field.String("method_name"),
 		field.Uint32("create_at").
 			DefaultFunc(func() uint32 {
 				return uint32(time.Now().Unix())

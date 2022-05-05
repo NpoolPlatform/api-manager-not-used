@@ -88,14 +88,12 @@ func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 	for key, info := range srvInfo {
 		for _, method := range info.Methods {
 			apis.Paths = append(apis.Paths, &apimgr.Path{
-				Method:     "NONE",
-				Path:       fmt.Sprintf("%v/%v", key, method.Name),
-				MethodName: method.Name,
+				Method: "NONE",
+				Path:   fmt.Sprintf("%v/%v", key, method.Name),
 			})
 		}
 	}
-	fmt.Println("apis************************")
-	fmt.Println(apis)
+
 	return apis
 }
 

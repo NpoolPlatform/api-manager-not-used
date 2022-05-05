@@ -25,8 +25,6 @@ const (
 	FieldExported = "exported"
 	// FieldPathPrefix holds the string denoting the path_prefix field in the database.
 	FieldPathPrefix = "path_prefix"
-	// FieldMethodName holds the string denoting the method_name field in the database.
-	FieldMethodName = "method_name"
 	// FieldCreateAt holds the string denoting the create_at field in the database.
 	FieldCreateAt = "create_at"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
@@ -47,7 +45,6 @@ var Columns = []string{
 	FieldPath,
 	FieldExported,
 	FieldPathPrefix,
-	FieldMethodName,
 	FieldCreateAt,
 	FieldUpdateAt,
 	FieldDeleteAt,
