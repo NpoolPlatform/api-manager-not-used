@@ -94,7 +94,8 @@ func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 			})
 		}
 	}
-
+	fmt.Println("apis************************")
+	fmt.Println(apis)
 	return apis
 }
 
