@@ -25,6 +25,7 @@ func (ServiceAPI) Fields() []ent.Field {
 		field.String("service_name"),
 		field.JSON("domains", []string{}),
 		field.String("method"),
+		field.String("method_name"),
 		field.String("path"),
 		field.Bool("exported"),
 		field.String("path_prefix"),

@@ -15,6 +15,7 @@ var (
 		{Name: "service_name", Type: field.TypeString},
 		{Name: "domains", Type: field.TypeJSON},
 		{Name: "method", Type: field.TypeString},
+		{Name: "method_name", Type: field.TypeString},
 		{Name: "path", Type: field.TypeString},
 		{Name: "exported", Type: field.TypeBool},
 		{Name: "path_prefix", Type: field.TypeString},
@@ -31,7 +32,7 @@ var (
 			{
 				Name:    "serviceapi_service_name_method_path",
 				Unique:  true,
-				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[4], ServiceApIsColumns[5]},
+				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[4], ServiceApIsColumns[6]},
 			},
 		},
 	}

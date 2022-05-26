@@ -55,6 +55,8 @@ var runCmd = &cli.Command{
 
 func rpcRegister(server grpc.ServiceRegistrar) error {
 	api.Register(server)
+	apis := servicecli.GrpcApis(server)
+	serviceapi.ReliableRegister(apis)
 	return nil
 }
 

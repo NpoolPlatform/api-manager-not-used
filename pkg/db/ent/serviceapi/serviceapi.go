@@ -19,6 +19,8 @@ const (
 	FieldDomains = "domains"
 	// FieldMethod holds the string denoting the method field in the database.
 	FieldMethod = "method"
+	// FieldMethodName holds the string denoting the method_name field in the database.
+	FieldMethodName = "method_name"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
 	// FieldExported holds the string denoting the exported field in the database.
@@ -42,6 +44,7 @@ var Columns = []string{
 	FieldServiceName,
 	FieldDomains,
 	FieldMethod,
+	FieldMethodName,
 	FieldPath,
 	FieldExported,
 	FieldPathPrefix,

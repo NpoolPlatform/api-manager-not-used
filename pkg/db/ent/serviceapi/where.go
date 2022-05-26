@@ -112,6 +112,13 @@ func Method(v string) predicate.ServiceAPI {
 	})
 }
 
+// MethodName applies equality check predicate on the "method_name" field. It's identical to MethodNameEQ.
+func MethodName(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMethodName), v))
+	})
+}
+
 // Path applies equality check predicate on the "path" field. It's identical to PathEQ.
 func Path(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
@@ -484,6 +491,117 @@ func MethodEqualFold(v string) predicate.ServiceAPI {
 func MethodContainsFold(v string) predicate.ServiceAPI {
 	return predicate.ServiceAPI(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldMethod), v))
+	})
+}
+
+// MethodNameEQ applies the EQ predicate on the "method_name" field.
+func MethodNameEQ(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameNEQ applies the NEQ predicate on the "method_name" field.
+func MethodNameNEQ(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameIn applies the In predicate on the "method_name" field.
+func MethodNameIn(vs ...string) predicate.ServiceAPI {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMethodName), v...))
+	})
+}
+
+// MethodNameNotIn applies the NotIn predicate on the "method_name" field.
+func MethodNameNotIn(vs ...string) predicate.ServiceAPI {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMethodName), v...))
+	})
+}
+
+// MethodNameGT applies the GT predicate on the "method_name" field.
+func MethodNameGT(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameGTE applies the GTE predicate on the "method_name" field.
+func MethodNameGTE(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameLT applies the LT predicate on the "method_name" field.
+func MethodNameLT(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameLTE applies the LTE predicate on the "method_name" field.
+func MethodNameLTE(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameContains applies the Contains predicate on the "method_name" field.
+func MethodNameContains(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameHasPrefix applies the HasPrefix predicate on the "method_name" field.
+func MethodNameHasPrefix(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameHasSuffix applies the HasSuffix predicate on the "method_name" field.
+func MethodNameHasSuffix(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameEqualFold applies the EqualFold predicate on the "method_name" field.
+func MethodNameEqualFold(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldMethodName), v))
+	})
+}
+
+// MethodNameContainsFold applies the ContainsFold predicate on the "method_name" field.
+func MethodNameContainsFold(v string) predicate.ServiceAPI {
+	return predicate.ServiceAPI(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldMethodName), v))
 	})
 }
 

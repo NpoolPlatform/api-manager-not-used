@@ -32,10 +32,10 @@ func TestCRUD(t *testing.T) {
 		PathPrefix:  "/api/test-app",
 		Protocol:    "http",
 		Paths: []*npool.Path{
-			{Method: "GET", Path: "/v1/get/test", Exported: false},
-			{Method: "POST", Path: "/v1/get/test1", Exported: false},
-			{Method: "GET", Path: "/v1/get/test2", Exported: false},
-			{Method: "GET", Path: "/v1/get/test3", Exported: true},
+			{Method: "GET", Path: "/v1/get/test", Exported: false, MethodName: "Test1"},
+			{Method: "POST", Path: "/v1/get/test1", Exported: false, MethodName: "Test2"},
+			{Method: "GET", Path: "/v1/get/test2", Exported: false, MethodName: "Test3"},
+			{Method: "GET", Path: "/v1/get/test3", Exported: true, MethodName: "Test4"},
 		},
 	}
 

@@ -30,3 +30,12 @@ func (s *Server) GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.
 	}
 	return resp, nil
 }
+
+func (s *Server) GetServiceMethodApi(ctx context.Context, in *npool.GetServiceMethodApiRequest) (*npool.GetServiceMethodApiResponse, error) {
+	resp, err := crud.GetServiceMethodApi(ctx, in)
+	if err != nil {
+		logger.Sugar().Errorw("get apis error: %v", err)
+		return &npool.GetServiceMethodApiResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	return resp, nil
+}

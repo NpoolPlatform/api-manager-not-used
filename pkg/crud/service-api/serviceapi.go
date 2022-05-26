@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/api-manager/pkg/db"
+	"github.com/NpoolPlatform/api-manager/pkg/db/ent"
+	"github.com/NpoolPlatform/api-manager/pkg/db/ent/serviceapi"
 	npool "github.com/NpoolPlatform/message/npool/apimgr"
 
 	"github.com/google/uuid"
@@ -37,6 +39,7 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 			SetServiceName(in.GetInfo().GetServiceName()).
 			SetDomains([]string{}).
 			SetMethod(path.GetMethod()).
+			SetMethodName(path.GetMethodName()).
 			SetPath(path.GetPath()).
 			SetExported(path.GetExported()).
 			SetPathPrefix(in.GetInfo().GetPathPrefix()).
@@ -107,6 +110,22 @@ func Update(ctx context.Context, apis []*npool.ServicePath) error {
 	return nil
 }
 
+func rowToObject(info *ent.ServiceAPI) *npool.ServicePath {
+	return &npool.ServicePath{
+		ID:          info.ID.String(),
+		Domains:     info.Domains,
+		ServiceName: info.ServiceName,
+		Method:      info.Method,
+		MethodName:  info.MethodName,
+		Path:        info.Path,
+		Exported:    info.Exported,
+		PathPrefix:  info.PathPrefix,
+		Protocol:    info.Protocol,
+		CreateAt:    info.CreateAt,
+		UpdateAt:    info.UpdateAt,
+	}
+}
+
 func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, grpcTimeout)
 	defer cancel()
@@ -126,21 +145,44 @@ func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisRespo
 
 	apis := []*npool.ServicePath{}
 	for _, info := range infos {
-		apis = append(apis, &npool.ServicePath{
-			ID:          info.ID.String(),
-			Domains:     info.Domains,
-			ServiceName: info.ServiceName,
-			Method:      info.Method,
-			Path:        info.Path,
-			Exported:    info.Exported,
-			PathPrefix:  info.PathPrefix,
-			Protocol:    info.Protocol,
-			CreateAt:    info.CreateAt,
-			UpdateAt:    info.UpdateAt,
-		})
+		apis = append(apis, rowToObject(info))
 	}
 
 	return &npool.GetApisResponse{
 		Infos: apis,
+	}, nil
+}
+
+func GetServiceMethodApi(ctx context.Context, in *npool.GetServiceMethodApiRequest) (*npool.GetServiceMethodApiResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, grpcTimeout)
+	defer cancel()
+
+	cli, err := db.Client()
+	if err != nil {
+		return nil, xerrors.Errorf("fail get db client: %v", err)
+	}
+
+	infos, err := cli.
+		ServiceAPI.
+		Query().
+		Where(
+			serviceapi.And(
+				serviceapi.ServiceName(in.GetServiceName()),
+				serviceapi.MethodName(in.GetMethodName()),
+			),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, xerrors.Errorf("fail query service api: %v", err)
+	}
+
+	var api *npool.ServicePath
+	for _, info := range infos {
+		api = rowToObject(info)
+		break
+	}
+
+	return &npool.GetServiceMethodApiResponse{
+		Info: api,
 	}, nil
 }

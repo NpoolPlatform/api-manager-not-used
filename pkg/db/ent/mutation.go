@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -36,15 +37,16 @@ type ServiceAPIMutation struct {
 	service_name  *string
 	domains       *[]string
 	method        *string
+	method_name   *string
 	_path         *string
 	exported      *bool
 	path_prefix   *string
 	create_at     *uint32
-	addcreate_at  *uint32
+	addcreate_at  *int32
 	update_at     *uint32
-	addupdate_at  *uint32
+	addupdate_at  *int32
 	delete_at     *uint32
-	adddelete_at  *uint32
+	adddelete_at  *int32
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*ServiceAPI, error)
@@ -81,7 +83,7 @@ func withServiceAPIID(id uuid.UUID) serviceapiOption {
 		m.oldValue = func(ctx context.Context) (*ServiceAPI, error) {
 			once.Do(func() {
 				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
+					err = errors.New("querying old values post mutation is not allowed")
 				} else {
 					value, err = m.Client().ServiceAPI.Get(ctx, id)
 				}
@@ -114,7 +116,7 @@ func (m ServiceAPIMutation) Client() *Client {
 // it returns an error otherwise.
 func (m ServiceAPIMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
 	tx := &Tx{config: m.config}
 	tx.init()
@@ -136,6 +138,25 @@ func (m *ServiceAPIMutation) ID() (id uuid.UUID, exists bool) {
 	return *m.id, true
 }
 
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ServiceAPIMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ServiceAPI.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
 // SetProtocol sets the "protocol" field.
 func (m *ServiceAPIMutation) SetProtocol(s string) {
 	m.protocol = &s
@@ -155,10 +176,10 @@ func (m *ServiceAPIMutation) Protocol() (r string, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldProtocol(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldProtocol is only allowed on UpdateOne operations")
+		return v, errors.New("OldProtocol is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldProtocol requires an ID field in the mutation")
+		return v, errors.New("OldProtocol requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -191,10 +212,10 @@ func (m *ServiceAPIMutation) ServiceName() (r string, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldServiceName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldServiceName is only allowed on UpdateOne operations")
+		return v, errors.New("OldServiceName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldServiceName requires an ID field in the mutation")
+		return v, errors.New("OldServiceName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -227,10 +248,10 @@ func (m *ServiceAPIMutation) Domains() (r []string, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldDomains(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDomains is only allowed on UpdateOne operations")
+		return v, errors.New("OldDomains is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDomains requires an ID field in the mutation")
+		return v, errors.New("OldDomains requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -263,10 +284,10 @@ func (m *ServiceAPIMutation) Method() (r string, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldMethod(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldMethod is only allowed on UpdateOne operations")
+		return v, errors.New("OldMethod is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldMethod requires an ID field in the mutation")
+		return v, errors.New("OldMethod requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -278,6 +299,42 @@ func (m *ServiceAPIMutation) OldMethod(ctx context.Context) (v string, err error
 // ResetMethod resets all changes to the "method" field.
 func (m *ServiceAPIMutation) ResetMethod() {
 	m.method = nil
+}
+
+// SetMethodName sets the "method_name" field.
+func (m *ServiceAPIMutation) SetMethodName(s string) {
+	m.method_name = &s
+}
+
+// MethodName returns the value of the "method_name" field in the mutation.
+func (m *ServiceAPIMutation) MethodName() (r string, exists bool) {
+	v := m.method_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMethodName returns the old "method_name" field's value of the ServiceAPI entity.
+// If the ServiceAPI object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ServiceAPIMutation) OldMethodName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMethodName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMethodName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMethodName: %w", err)
+	}
+	return oldValue.MethodName, nil
+}
+
+// ResetMethodName resets all changes to the "method_name" field.
+func (m *ServiceAPIMutation) ResetMethodName() {
+	m.method_name = nil
 }
 
 // SetPath sets the "path" field.
@@ -299,10 +356,10 @@ func (m *ServiceAPIMutation) Path() (r string, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldPath(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPath is only allowed on UpdateOne operations")
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPath requires an ID field in the mutation")
+		return v, errors.New("OldPath requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -335,10 +392,10 @@ func (m *ServiceAPIMutation) Exported() (r bool, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldExported(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldExported is only allowed on UpdateOne operations")
+		return v, errors.New("OldExported is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldExported requires an ID field in the mutation")
+		return v, errors.New("OldExported requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -371,10 +428,10 @@ func (m *ServiceAPIMutation) PathPrefix() (r string, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldPathPrefix(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPathPrefix is only allowed on UpdateOne operations")
+		return v, errors.New("OldPathPrefix is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPathPrefix requires an ID field in the mutation")
+		return v, errors.New("OldPathPrefix requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -408,10 +465,10 @@ func (m *ServiceAPIMutation) CreateAt() (r uint32, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldCreateAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldCreateAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateAt requires an ID field in the mutation")
+		return v, errors.New("OldCreateAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -421,7 +478,7 @@ func (m *ServiceAPIMutation) OldCreateAt(ctx context.Context) (v uint32, err err
 }
 
 // AddCreateAt adds u to the "create_at" field.
-func (m *ServiceAPIMutation) AddCreateAt(u uint32) {
+func (m *ServiceAPIMutation) AddCreateAt(u int32) {
 	if m.addcreate_at != nil {
 		*m.addcreate_at += u
 	} else {
@@ -430,7 +487,7 @@ func (m *ServiceAPIMutation) AddCreateAt(u uint32) {
 }
 
 // AddedCreateAt returns the value that was added to the "create_at" field in this mutation.
-func (m *ServiceAPIMutation) AddedCreateAt() (r uint32, exists bool) {
+func (m *ServiceAPIMutation) AddedCreateAt() (r int32, exists bool) {
 	v := m.addcreate_at
 	if v == nil {
 		return
@@ -464,10 +521,10 @@ func (m *ServiceAPIMutation) UpdateAt() (r uint32, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldUpdateAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateAt requires an ID field in the mutation")
+		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -477,7 +534,7 @@ func (m *ServiceAPIMutation) OldUpdateAt(ctx context.Context) (v uint32, err err
 }
 
 // AddUpdateAt adds u to the "update_at" field.
-func (m *ServiceAPIMutation) AddUpdateAt(u uint32) {
+func (m *ServiceAPIMutation) AddUpdateAt(u int32) {
 	if m.addupdate_at != nil {
 		*m.addupdate_at += u
 	} else {
@@ -486,7 +543,7 @@ func (m *ServiceAPIMutation) AddUpdateAt(u uint32) {
 }
 
 // AddedUpdateAt returns the value that was added to the "update_at" field in this mutation.
-func (m *ServiceAPIMutation) AddedUpdateAt() (r uint32, exists bool) {
+func (m *ServiceAPIMutation) AddedUpdateAt() (r int32, exists bool) {
 	v := m.addupdate_at
 	if v == nil {
 		return
@@ -520,10 +577,10 @@ func (m *ServiceAPIMutation) DeleteAt() (r uint32, exists bool) {
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ServiceAPIMutation) OldDeleteAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDeleteAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldDeleteAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDeleteAt requires an ID field in the mutation")
+		return v, errors.New("OldDeleteAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
@@ -533,7 +590,7 @@ func (m *ServiceAPIMutation) OldDeleteAt(ctx context.Context) (v uint32, err err
 }
 
 // AddDeleteAt adds u to the "delete_at" field.
-func (m *ServiceAPIMutation) AddDeleteAt(u uint32) {
+func (m *ServiceAPIMutation) AddDeleteAt(u int32) {
 	if m.adddelete_at != nil {
 		*m.adddelete_at += u
 	} else {
@@ -542,7 +599,7 @@ func (m *ServiceAPIMutation) AddDeleteAt(u uint32) {
 }
 
 // AddedDeleteAt returns the value that was added to the "delete_at" field in this mutation.
-func (m *ServiceAPIMutation) AddedDeleteAt() (r uint32, exists bool) {
+func (m *ServiceAPIMutation) AddedDeleteAt() (r int32, exists bool) {
 	v := m.adddelete_at
 	if v == nil {
 		return
@@ -575,7 +632,7 @@ func (m *ServiceAPIMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ServiceAPIMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.protocol != nil {
 		fields = append(fields, serviceapi.FieldProtocol)
 	}
@@ -587,6 +644,9 @@ func (m *ServiceAPIMutation) Fields() []string {
 	}
 	if m.method != nil {
 		fields = append(fields, serviceapi.FieldMethod)
+	}
+	if m.method_name != nil {
+		fields = append(fields, serviceapi.FieldMethodName)
 	}
 	if m._path != nil {
 		fields = append(fields, serviceapi.FieldPath)
@@ -622,6 +682,8 @@ func (m *ServiceAPIMutation) Field(name string) (ent.Value, bool) {
 		return m.Domains()
 	case serviceapi.FieldMethod:
 		return m.Method()
+	case serviceapi.FieldMethodName:
+		return m.MethodName()
 	case serviceapi.FieldPath:
 		return m.Path()
 	case serviceapi.FieldExported:
@@ -651,6 +713,8 @@ func (m *ServiceAPIMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldDomains(ctx)
 	case serviceapi.FieldMethod:
 		return m.OldMethod(ctx)
+	case serviceapi.FieldMethodName:
+		return m.OldMethodName(ctx)
 	case serviceapi.FieldPath:
 		return m.OldPath(ctx)
 	case serviceapi.FieldExported:
@@ -699,6 +763,13 @@ func (m *ServiceAPIMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMethod(v)
+		return nil
+	case serviceapi.FieldMethodName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMethodName(v)
 		return nil
 	case serviceapi.FieldPath:
 		v, ok := value.(string)
@@ -783,21 +854,21 @@ func (m *ServiceAPIMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ServiceAPIMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case serviceapi.FieldCreateAt:
-		v, ok := value.(uint32)
+		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCreateAt(v)
 		return nil
 	case serviceapi.FieldUpdateAt:
-		v, ok := value.(uint32)
+		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdateAt(v)
 		return nil
 	case serviceapi.FieldDeleteAt:
-		v, ok := value.(uint32)
+		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -841,6 +912,9 @@ func (m *ServiceAPIMutation) ResetField(name string) error {
 		return nil
 	case serviceapi.FieldMethod:
 		m.ResetMethod()
+		return nil
+	case serviceapi.FieldMethodName:
+		m.ResetMethodName()
 		return nil
 	case serviceapi.FieldPath:
 		m.ResetPath()

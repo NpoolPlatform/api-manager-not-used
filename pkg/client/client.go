@@ -64,8 +64,9 @@ func MuxApis(mux *runtime.ServeMux) *apimgr.ServiceApis {
 			tmp := reflect.NewAt(pat.Type(), unsafe.Pointer(pat.UnsafeAddr())).Elem()
 			str := tmp.MethodByName("String").Call(nil)[0].String()
 			apis.Paths = append(apis.Paths, &apimgr.Path{
-				Method: methIter.Key().String(),
-				Path:   str,
+				Method:     methIter.Key().String(),
+				Path:       str,
+				MethodName: "NONE",
 			})
 		}
 	}
@@ -78,7 +79,7 @@ func Register(mux *runtime.ServeMux) {
 	go reliableRegister(apis)
 }
 
-func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
+func GrpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 	srvInfo := server.(*grpc.Server).GetServiceInfo()
 	apis := &apimgr.ServiceApis{
 		ServiceName: config.GetStringValueWithNameSpace("", config.KeyHostname),
@@ -88,8 +89,9 @@ func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 	for key, info := range srvInfo {
 		for _, method := range info.Methods {
 			apis.Paths = append(apis.Paths, &apimgr.Path{
-				Method: "NONE",
-				Path:   fmt.Sprintf("%v/%v", key, method.Name),
+				Method:     "NONE",
+				Path:       fmt.Sprintf("%v/%v", key, method.Name),
+				MethodName: method.Name,
 			})
 		}
 	}
@@ -98,6 +100,6 @@ func grpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 }
 
 func RegisterGRPC(server grpc.ServiceRegistrar) {
-	apis := grpcApis(server)
+	apis := GrpcApis(server)
 	go reliableRegister(apis)
 }

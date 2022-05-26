@@ -25,6 +25,8 @@ type ServiceAPI struct {
 	Domains []string `json:"domains,omitempty"`
 	// Method holds the value of the "method" field.
 	Method string `json:"method,omitempty"`
+	// MethodName holds the value of the "method_name" field.
+	MethodName string `json:"method_name,omitempty"`
 	// Path holds the value of the "path" field.
 	Path string `json:"path,omitempty"`
 	// Exported holds the value of the "exported" field.
@@ -50,7 +52,7 @@ func (*ServiceAPI) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case serviceapi.FieldCreateAt, serviceapi.FieldUpdateAt, serviceapi.FieldDeleteAt:
 			values[i] = new(sql.NullInt64)
-		case serviceapi.FieldProtocol, serviceapi.FieldServiceName, serviceapi.FieldMethod, serviceapi.FieldPath, serviceapi.FieldPathPrefix:
+		case serviceapi.FieldProtocol, serviceapi.FieldServiceName, serviceapi.FieldMethod, serviceapi.FieldMethodName, serviceapi.FieldPath, serviceapi.FieldPathPrefix:
 			values[i] = new(sql.NullString)
 		case serviceapi.FieldID:
 			values[i] = new(uuid.UUID)
@@ -100,6 +102,12 @@ func (sa *ServiceAPI) assignValues(columns []string, values []interface{}) error
 				return fmt.Errorf("unexpected type %T for field method", values[i])
 			} else if value.Valid {
 				sa.Method = value.String
+			}
+		case serviceapi.FieldMethodName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field method_name", values[i])
+			} else if value.Valid {
+				sa.MethodName = value.String
 			}
 		case serviceapi.FieldPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -173,6 +181,8 @@ func (sa *ServiceAPI) String() string {
 	builder.WriteString(fmt.Sprintf("%v", sa.Domains))
 	builder.WriteString(", method=")
 	builder.WriteString(sa.Method)
+	builder.WriteString(", method_name=")
+	builder.WriteString(sa.MethodName)
 	builder.WriteString(", path=")
 	builder.WriteString(sa.Path)
 	builder.WriteString(", exported=")
