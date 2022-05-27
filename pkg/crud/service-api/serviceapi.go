@@ -153,7 +153,7 @@ func GetApis(ctx context.Context, in *npool.GetApisRequest) (*npool.GetApisRespo
 	}, nil
 }
 
-func GetServiceMethodAPI(ctx context.Context, in *npool.GetServiceMethodApiRequest) (*npool.GetServiceMethodApiResponse, error) {
+func GetServiceMethodAPI(ctx context.Context, in *npool.GetServiceMethodAPIRequest) (*npool.GetServiceMethodAPIResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, grpcTimeout)
 	defer cancel()
 
@@ -182,7 +182,7 @@ func GetServiceMethodAPI(ctx context.Context, in *npool.GetServiceMethodApiReque
 		break
 	}
 
-	return &npool.GetServiceMethodApiResponse{
+	return &npool.GetServiceMethodAPIResponse{
 		Info: api,
 	}, nil
 }

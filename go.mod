@@ -7,15 +7,17 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20220526050249-956b54fac9f1
-	github.com/NpoolPlatform/message v0.0.0-20220526060919-2bd0b10a1f68
+	github.com/NpoolPlatform/message v0.0.0-20220501030927-34f296682c0c
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/miekg/dns v1.1.43 // indirect
 	github.com/prometheus/common v0.30.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.1-0.20210427113832-6241f9ab9942
