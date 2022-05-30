@@ -122,7 +122,7 @@ func do(ctx context.Context, fn func(_ctx context.Context, cli apimgr.ApiManager
 
 func GetServiceMethodAPI(ctx context.Context, serviceName, methodName string) (*apimgr.ServicePath, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli apimgr.ApiManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetServiceMethodApi(ctx, &apimgr.GetServiceMethodApiRequest{
+		resp, err := cli.GetServiceMethodAPI(ctx, &apimgr.GetServiceMethodAPIRequest{
 			ServiceName: serviceName,
 			MethodName:  methodName,
 		})
