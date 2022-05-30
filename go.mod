@@ -7,7 +7,7 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20220526050249-956b54fac9f1
-	github.com/NpoolPlatform/message v0.0.0-20220501030927-34f296682c0c
+	github.com/NpoolPlatform/message v0.0.0-20220530011435-281c2b6aedd4
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
@@ -26,7 +26,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
-	google.golang.org/grpc v1.46.0
+	google.golang.org/grpc v1.46.2
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.0
 )
