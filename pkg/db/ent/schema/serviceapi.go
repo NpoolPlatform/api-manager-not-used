@@ -47,14 +47,11 @@ func (ServiceAPI) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServiceAPI.
-func (ServiceAPI) Edges() []ent.Edge {
-	return nil
-}
-
 func (ServiceAPI) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("service_name", "method", "path").
+		index.Fields("service_name", "path").
+			Unique(),
+		index.Fields("service_name", "method_name").
 			Unique(),
 	}
 }
