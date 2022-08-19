@@ -175,9 +175,7 @@ func GetServiceMethodAPI(ctx context.Context, in *npool.GetServiceMethodAPIReque
 			serviceapi.ServiceName(in.GetServiceName()),
 			serviceapi.MethodName(in.GetMethodName()),
 		).
-		Order(func(s *sql.Selector) {
-			s.OrderBy(serviceapi.FieldServiceName, serviceapi.FieldMethodName)
-		}).
+		Order(ent.Desc(serviceapi.FieldUpdateAt)).
 		All(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail query service api: %v", err)
