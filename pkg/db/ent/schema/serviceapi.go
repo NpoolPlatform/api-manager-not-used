@@ -49,9 +49,7 @@ func (ServiceAPI) Fields() []ent.Field {
 
 func (ServiceAPI) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("service_name", "path").
-			Unique(),
-		index.Fields("service_name", "method_name").
+		index.Fields("service_name", "method", "path").
 			Unique(),
 	}
 }

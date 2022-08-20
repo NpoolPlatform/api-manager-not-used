@@ -30,14 +30,9 @@ var (
 		PrimaryKey: []*schema.Column{ServiceApIsColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "serviceapi_service_name_path",
+				Name:    "serviceapi_service_name_method_path",
 				Unique:  true,
-				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[6]},
-			},
-			{
-				Name:    "serviceapi_service_name_method_name",
-				Unique:  true,
-				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[5]},
+				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[4], ServiceApIsColumns[6]},
 			},
 		},
 	}
