@@ -116,7 +116,7 @@ func getGatewayRouters(name string) ([]serviceapi.EntryPoint, error) {
 	// provider can use kubernetes or k8s
 	url := fmt.Sprintf(
 		"http://traefik.kube-system.svc.cluster.local:38080/api/http/routers?provider=kubernetes&search=%v",
-		domain,
+		domain[0],
 	)
 
 	// internal already set timeout
@@ -134,47 +134,47 @@ func getGatewayRouters(name string) ([]serviceapi.EntryPoint, error) {
 	return routers, nil
 }
 
-func RegisterGRPC(server grpc.ServiceRegistrar) error {
-	apis := GrpcApis(server)
+func Register(mux *runtime.ServeMux) error {
+	apis := MuxApis(mux)
+	pathMap := make(map[string]struct{})
+	for _, api := range apis.Paths {
+		// here for every host has one same path
+		// host1 patha
+		// host2 patha
+		pathMap[api.Path] = struct{}{}
+	}
 
-	if apis.Protocol == protocolHTTP {
-		pathMap := make(map[string]struct{})
-		for _, api := range apis.Paths {
-			// here for every host has one same path
-			// host1 patha
-			// host2 patha
-			pathMap[api.Path] = struct{}{}
-		}
+	gatewayRouters, err := getGatewayRouters(apis.ServiceName)
+	if err != nil {
+		return err
+	}
 
-		gatewayRouters, err := getGatewayRouters(apis.ServiceName)
+	for _, router := range gatewayRouters {
+		prefix, err := router.PathPrefix()
 		if err != nil {
 			return err
 		}
 
-		for _, router := range gatewayRouters {
-			prefix, err := router.PathPrefix()
-			if err != nil {
-				return err
-			}
-
-			// TODO router path check and in gateway already register
-			// path, err := router.Path()
-			// if err != nil {
-			// 	return err
-			// }
-			// if _, ok := pathMap[path]; !ok {
-			// 	return err
-			// 	// logger.Sugar().Warn("some api not export")
-			// }
-			apis.PathPrefix = prefix
-			apis.Exported = true
-			apis.Domains = append(apis.Domains, router.Domain())
-		}
+		// TODO router path check and in gateway already register
+		// path, err := router.Path()
+		// if err != nil {
+		// 	return err
+		// }
+		// if _, ok := pathMap[path]; !ok {
+		// 	return err
+		// 	// logger.Sugar().Warn("some api not export")
+		// }
+		apis.PathPrefix = prefix
+		apis.Exported = true
+		apis.Domains = append(apis.Domains, router.Domain())
 	}
-
-	reliableRegister(apis)
-
+	go reliableRegister(apis)
 	return nil
+}
+
+func RegisterGRPC(server grpc.ServiceRegistrar) {
+	apis := GrpcApis(server)
+	go reliableRegister(apis)
 }
 
 func do(ctx context.Context, fn func(_ctx context.Context, cli apimgr.ApiManagerClient) (cruder.Any, error)) (cruder.Any, error) {
