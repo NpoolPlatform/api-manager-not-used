@@ -116,7 +116,7 @@ func getGatewayRouters(name string) ([]serviceapi.EntryPoint, error) {
 	// provider can use kubernetes or k8s
 	url := fmt.Sprintf(
 		"http://traefik.kube-system.svc.cluster.local:38080/api/http/routers?provider=kubernetes&search=%v",
-		domain,
+		domain[0],
 	)
 
 	// internal already set timeout
