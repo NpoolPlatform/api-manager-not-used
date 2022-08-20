@@ -34,6 +34,11 @@ var (
 				Unique:  true,
 				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[4], ServiceApIsColumns[6]},
 			},
+			{
+				Name:    "serviceapi_service_name_method_name",
+				Unique:  false,
+				Columns: []*schema.Column{ServiceApIsColumns[2], ServiceApIsColumns[5]},
+			},
 		},
 	}
 	// Tables holds all the tables in the schema.
