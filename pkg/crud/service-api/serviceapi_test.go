@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/NpoolPlatform/api-manager/pkg/test-init" //nolint
+	testinit "github.com/NpoolPlatform/api-manager/pkg/test-init" //nolint
 	npool "github.com/NpoolPlatform/message/npool/apimgr"
 
 	"github.com/google/uuid"

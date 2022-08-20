@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/api-manager/pkg/db"
 	"github.com/NpoolPlatform/api-manager/pkg/db/ent"
 	"github.com/NpoolPlatform/api-manager/pkg/db/ent/serviceapi"
@@ -43,7 +44,12 @@ func Register(ctx context.Context, in *npool.RegisterRequest) (*npool.RegisterRe
 			SetPath(path.GetPath()).
 			SetExported(path.GetExported()).
 			SetPathPrefix(in.GetInfo().GetPathPrefix()).
-			OnConflict().
+			OnConflict(
+				sql.ConflictColumns(
+					serviceapi.FieldServiceName,
+					serviceapi.FieldPath,
+				),
+			).
 			UpdateNewValues().
 			Exec(ctx)
 		if err != nil {
@@ -166,11 +172,10 @@ func GetServiceMethodAPI(ctx context.Context, in *npool.GetServiceMethodAPIReque
 		ServiceAPI.
 		Query().
 		Where(
-			serviceapi.And(
-				serviceapi.ServiceName(in.GetServiceName()),
-				serviceapi.MethodName(in.GetMethodName()),
-			),
+			serviceapi.ServiceName(in.GetServiceName()),
+			serviceapi.MethodName(in.GetMethodName()),
 		).
+		Order(ent.Desc(serviceapi.FieldUpdateAt)).
 		All(ctx)
 	if err != nil {
 		return nil, xerrors.Errorf("fail query service api: %v", err)

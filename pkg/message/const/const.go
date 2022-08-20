@@ -1,5 +1,6 @@
 package constant
 
 const (
-	ServiceName = "api-manager.npool.top" //nolint
+	// ServiceName ..
+	ServiceName = "api-manager.npool.top"
 )

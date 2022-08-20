@@ -2,11 +2,15 @@ package client
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 	"unsafe"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 	config "github.com/NpoolPlatform/go-service-framework/pkg/config"
@@ -16,44 +20,52 @@ import (
 	apimgr "github.com/NpoolPlatform/message/npool/apimgr"
 
 	constant "github.com/NpoolPlatform/api-manager/pkg/message/const"
+	serviceapi "github.com/NpoolPlatform/api-manager/pkg/middleware/service-api"
 
 	"google.golang.org/grpc"
 )
 
+const (
+	protocolHTTP = "http"
+	protocolGrpc = "grpc"
+)
+
 func reliableRegister(apis *apimgr.ServiceApis) {
-	for {
-		conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
-		if err != nil {
-			logger.Sugar().Errorf("fail get api manager connection: %v", err)
-			time.Sleep(time.Minute)
+	tick := time.NewTicker(time.Minute)
+	defer tick.Stop()
+
+	for range tick.C {
+		if err := func() error {
+			conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
+			if err != nil {
+				return err
+			}
+			defer conn.Close()
+
+			cli := apimgr.NewApiManagerClient(conn)
+
+			ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
+			defer cancel()
+
+			_, err = cli.Register(ctx, &apimgr.RegisterRequest{
+				Info: apis,
+			})
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			logger.Sugar().Errorf("fail register apis: %v", err)
 			continue
 		}
-
-		cli := apimgr.NewApiManagerClient(conn)
-
-		ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
-
-		_, err = cli.Register(ctx, &apimgr.RegisterRequest{
-			Info: apis,
-		})
-		if err == nil {
-			cancel()
-			conn.Close()
-			return
-		}
-
-		logger.Sugar().Errorf("fail register apis: %v", err)
-		time.Sleep(time.Minute)
-
-		cancel()
-		conn.Close()
+		break
 	}
 }
 
 func MuxApis(mux *runtime.ServeMux) *apimgr.ServiceApis {
 	apis := &apimgr.ServiceApis{
 		ServiceName: config.GetStringValueWithNameSpace("", config.KeyHostname),
-		Protocol:    "http",
+		Protocol:    protocolHTTP,
 	}
 
 	valueOfMux := reflect.ValueOf(mux).Elem()
@@ -75,16 +87,11 @@ func MuxApis(mux *runtime.ServeMux) *apimgr.ServiceApis {
 	return apis
 }
 
-func Register(mux *runtime.ServeMux) {
-	apis := MuxApis(mux)
-	go reliableRegister(apis)
-}
-
 func GrpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 	srvInfo := server.(*grpc.Server).GetServiceInfo()
 	apis := &apimgr.ServiceApis{
 		ServiceName: config.GetStringValueWithNameSpace("", config.KeyHostname),
-		Protocol:    "grpc",
+		Protocol:    protocolGrpc,
 	}
 
 	for key, info := range srvInfo {
@@ -100,9 +107,74 @@ func GrpcApis(server grpc.ServiceRegistrar) *apimgr.ServiceApis {
 	return apis
 }
 
-func RegisterGRPC(server grpc.ServiceRegistrar) {
+func getGatewayRouters(name string) ([]serviceapi.EntryPoint, error) {
+	domain := strings.SplitN(name, ".", 2)
+	if len(domain) < 2 {
+		return nil, errors.New("service name must like example.npool.top")
+	}
+
+	// provider can use kubernetes or k8s
+	url := fmt.Sprintf(
+		"http://traefik.kube-system.svc.cluster.local:38080/api/http/routers?provider=kubernetes&search=%v",
+		domain,
+	)
+
+	// internal already set timeout
+	resp, err := resty.New().R().Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	routers := make([]serviceapi.EntryPoint, 0)
+	err = json.Unmarshal(resp.Body(), &routers)
+	if err != nil {
+		return nil, err
+	}
+
+	return routers, nil
+}
+
+func RegisterGRPC(server grpc.ServiceRegistrar) error {
 	apis := GrpcApis(server)
-	go reliableRegister(apis)
+
+	if apis.Protocol == protocolHTTP {
+		pathMap := make(map[string]struct{})
+		for _, api := range apis.Paths {
+			// here for every host has one same path
+			// host1 patha
+			// host2 patha
+			pathMap[api.Path] = struct{}{}
+		}
+
+		gatewayRouters, err := getGatewayRouters(apis.ServiceName)
+		if err != nil {
+			return err
+		}
+
+		for _, router := range gatewayRouters {
+			prefix, err := router.PathPrefix()
+			if err != nil {
+				return err
+			}
+
+			// TODO router path check and in gateway already register
+			// path, err := router.Path()
+			// if err != nil {
+			// 	return err
+			// }
+			// if _, ok := pathMap[path]; !ok {
+			// 	return err
+			// 	// logger.Sugar().Warn("some api not export")
+			// }
+			apis.PathPrefix = prefix
+			apis.Exported = true
+			apis.Domains = append(apis.Domains, router.Domain())
+		}
+	}
+
+	reliableRegister(apis)
+
+	return nil
 }
 
 func do(ctx context.Context, fn func(_ctx context.Context, cli apimgr.ApiManagerClient) (cruder.Any, error)) (cruder.Any, error) {
