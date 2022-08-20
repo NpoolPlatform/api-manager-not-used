@@ -10,6 +10,7 @@ import (
 	testinit "github.com/NpoolPlatform/api-manager/pkg/test-init" //nolint
 	npool "github.com/NpoolPlatform/message/npool/apimgr"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,18 +28,14 @@ func TestCRUD(t *testing.T) {
 		return
 	}
 	apis := npool.ServiceApis{
-		ServiceName: "third-login-gateway.npool.top",
-		Protocol:    "grpc",
+		ServiceName: fmt.Sprintf("test-app.npool.top-%v", uuid.New()),
+		PathPrefix:  "/api/test-app",
+		Protocol:    "http",
 		Paths: []*npool.Path{
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/CreateAuths"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/CreateAppAuth"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/CreateAppAuths"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/CreateThirdParty"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/GetThirdPartyOnly"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/Login"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/Version"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/GetAuths"},
-			{Method: "NONE", Path: "third.logon.gateway.v1.ThirdLoginGateway/GetAppAuths"},
+			{Method: "GET", Path: "/v1/get/test", Exported: false, MethodName: "Test1"},
+			{Method: "POST", Path: "/v1/get/test1", Exported: false, MethodName: "Test2"},
+			{Method: "GET", Path: "/v1/get/test2", Exported: false, MethodName: "Test3"},
+			{Method: "GET", Path: "/v1/get/test3", Exported: true, MethodName: "Test4"},
 		},
 	}
 
